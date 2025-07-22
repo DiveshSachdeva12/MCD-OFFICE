@@ -1,0 +1,76 @@
+/* index.css */
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.navbar {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 16px;
+  font-size: 14px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar-top select {
+  padding: 2px 6px;
+}
+
+.navbar-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.navbar-main img {
+  height: 60px;
+}
+
+.navbar-bottom {
+  background-color: #004b87;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.navbar-bottom a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0 10px;
+}
+
+.navbar-bottom a:hover {
+  text-decoration: underline;
+}
+
+.button-group {
+  display: flex;
+}
+
+.button-group button {
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.online-service {
+  background-color: #c32149;
+}
+
+.pay-tax {
+  background-color: #f6921e;
+}

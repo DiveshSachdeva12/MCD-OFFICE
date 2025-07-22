@@ -1,0 +1,33 @@
+.custom-navbar {
+  background-color: #0d6efd;
+}
+
+.small-text {
+  font-size: 0.85rem;
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .top-header {
+    font-size: 12px;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+  }
+
+  .custom-navbar .navbar-brand {
+    font-size: 1rem;
+  }
+  .flag{
+    display: none;
+  }
+  
+}
+
