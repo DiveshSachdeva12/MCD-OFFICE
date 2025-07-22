@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { FaUser, FaPhoneAlt, FaHome, FaAlignLeft, FaHashtag } from 'react-icons/fa';
-
+import { BASE_URL } from '../api/baseUrl';
 const ComplaintForm = () => {
   const [form, setForm] = useState({
     complaintId: 'C' + Date.now(),
@@ -27,7 +27,8 @@ const ComplaintForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/complaints', form);
+      await axios.post(`${BASE_URL}/api/complaints`, form);
+
     Swal.fire({
   title: "Success!",
   text: "Your complaint has been submitted successfully.",

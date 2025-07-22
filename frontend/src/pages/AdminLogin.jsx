@@ -9,7 +9,7 @@ export default function AdminLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (password === 'admin123') {
+    if (password === '1326') {
       Swal.fire({
         icon: 'success',
         title: 'Login Successful!',

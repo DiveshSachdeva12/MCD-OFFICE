@@ -8,7 +8,7 @@ export default function KitePassword() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === '123') {
+    if (password === '1327') {
       Swal.fire({
         icon: 'success',
         title: 'Access Granted',

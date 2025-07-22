@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { BASE_URL } from '../api/baseUrl';
 
 export default function AdminDashboard() {
   const [view, setView] = useState('');
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
 
   const fetchComplaints = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/complaints');
+      const res = await axios.get(`${BASE_URL}/api/complaints`);
       setComplaints(res.data);
     } catch (err) {
       console.error(err);
@@ -26,7 +27,7 @@ export default function AdminDashboard() {
 
   const fetchKites = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/kites');
+      const res = await axios.get(`${BASE_URL}/api/kites`);
       setKites(res.data);
     } catch (err) {
       console.error(err);
@@ -46,7 +47,7 @@ export default function AdminDashboard() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/complaints/${id}`);
+        await axios.delete(`${BASE_URL}/api/complaints/${id}`);
         fetchComplaints();
         Swal.fire('Deleted!', 'The complaint has been deleted.', 'success');
       } catch (error) {
@@ -59,7 +60,7 @@ export default function AdminDashboard() {
   const toggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === 'completed' ? 'pending' : 'completed';
     try {
-      await axios.put(`http://localhost:5000/api/complaints/${id}`, { status: newStatus });
+      await axios.put(`${BASE_URL}/api/complaints/${id}`, { status: newStatus });
       fetchComplaints();
     } catch (error) {
       console.error(error);
@@ -80,7 +81,7 @@ export default function AdminDashboard() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/api/kites/${id}`);
+        await axios.delete(`${BASE_URL}/api/kites/${id}`);
         fetchKites();
         Swal.fire('Deleted!', 'The kite record has been deleted.', 'success');
       } catch (error) {
@@ -106,7 +107,7 @@ export default function AdminDashboard() {
 
     if (result.isConfirmed) {
       try {
-        await axios.put(`http://localhost:5000/api/complaints/${editingComplaintId}`, editedComplaint);
+        await axios.put(`${BASE_URL}/api/complaints/${editingComplaintId}`, editedComplaint);
         setEditingComplaintId(null);
         fetchComplaints();
         Swal.fire('Saved!', 'The complaint has been updated.', 'success');
@@ -226,26 +227,25 @@ export default function AdminDashboard() {
                       <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
                     ) : c.remarks || ''}
                   </td>
-                 <td>
-  <div className="d-flex align-items-center gap-2 flex-nowrap">
-    {editingComplaintId === c._id ? (
-      <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
-        Save
-      </button>
-    ) : (
-      <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>
-        Edit
-      </button>
-    )}
-    <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>
-      Toggle
-    </button>
-    <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>
-      Delete
-    </button>
-  </div>
-</td>
-
+                  <td>
+                    <div className="d-flex align-items-center gap-2 flex-nowrap">
+                      {editingComplaintId === c._id ? (
+                        <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
+                          Save
+                        </button>
+                      ) : (
+                        <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>
+                          Edit
+                        </button>
+                      )}
+                      <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>
+                        Toggle
+                      </button>
+                      <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

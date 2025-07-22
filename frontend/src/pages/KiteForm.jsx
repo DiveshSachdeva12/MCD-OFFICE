@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import { BASE_URL } from '../api/baseUrl';
 const KiteForm = () => {
   const [form, setForm] = useState({
     aadhaar: '',
@@ -32,7 +32,7 @@ const KiteForm = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post('http://localhost:5000/api/kites', form);
+     const res = await axios.post(`${BASE_URL}/api/kites`, form);
 
       Swal.fire({
         icon: 'success',
