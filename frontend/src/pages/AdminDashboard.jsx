@@ -191,6 +191,9 @@ export default function AdminDashboard() {
       onChange={(e) => setSearchQuery(e.target.value)}
     />
 
+
+<div className="table-responsive">
+
     <table className="table table-bordered mt-2">
       <thead className="table-dark">
         <tr>
@@ -250,6 +253,7 @@ export default function AdminDashboard() {
         ))}
       </tbody>
     </table>
+    </div>
   </div>
 )}
 
@@ -260,6 +264,7 @@ export default function AdminDashboard() {
       <h4>Kite Records</h4>
       <button className="btn btn-outline-secondary btn-sm" onClick={exportKiteCSV}>Export CSV</button>
     </div>
+<div className="table-responsive">
 
     <table className="table table-bordered mt-2">
       <thead className="table-dark">
@@ -283,6 +288,7 @@ export default function AdminDashboard() {
         ))}
       </tbody>
     </table>
+    </div>
   </div>
 )}
 

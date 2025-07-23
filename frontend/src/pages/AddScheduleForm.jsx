@@ -19,7 +19,6 @@ export default function AddScheduleForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     const isUpperCaseField = ['programName', 'venue', 'contactPerson', 'description'].includes(name);
 
     setFormData((prev) => ({
@@ -45,6 +44,11 @@ export default function AddScheduleForm() {
     return Object.keys(formErrors).length === 0;
   };
 
+  const formatDateToDDMMYYYY = (dateStr) => {
+    const [yyyy, mm, dd] = dateStr.split('-');
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -53,11 +57,11 @@ export default function AddScheduleForm() {
     }
 
     const fullTime = `${formData.time} ${formData.meridiem}`;
-    const dateWithoutYear = formData.date?.split('-').slice(1).join('-'); // Convert YYYY-MM-DD → MM-DD
+    const formattedDate = formatDateToDDMMYYYY(formData.date);
 
     const submissionData = {
       programName: formData.programName,
-      date: dateWithoutYear,
+      date: formattedDate,
       time: fullTime,
       venue: formData.venue,
       contactPerson: formData.contactPerson,
@@ -101,7 +105,7 @@ export default function AddScheduleForm() {
         </div>
 
         <div className="mb-2">
-          <label>Date (Month & Day Only)</label>
+          <label>Date (DD-MM-YYYY)</label>
           <input
             type="date"
             className={`form-control ${errors.date ? 'is-invalid' : ''}`}

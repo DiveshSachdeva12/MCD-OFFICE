@@ -24,6 +24,7 @@ app.use(express.json());
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/kites', kiteRoutes);
 app.use('/api/schedules', scheduleRoutes);
+app.use('/api', require('./routes/scheduleRoutes'));
 
 
 

@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { createSchedule, getSchedules, deleteSchedule } = require('../controllers/scheduleController');
+const scheduleController = require('../controllers/scheduleController');
 
-router.post('/', createSchedule);
-router.get('/', getSchedules);
-router.delete('/:id', deleteSchedule);
+// GET all schedules
+router.get('/', scheduleController.getSchedules);
+
+// POST a new schedule
+router.post('/', scheduleController.createSchedule);
+
+// PUT (update) a schedule by ID
+router.put('/:id', scheduleController.updateSchedule);
+
+// DELETE a schedule by ID
+router.delete('/:id', scheduleController.deleteSchedule);
 
 module.exports = router;

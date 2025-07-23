@@ -12,6 +12,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import Gallery from './pages/Gallery';
 import AddScheduleForm from './pages/AddScheduleForm';
 import ViewSchedules from './pages/ViewSchedules';
+
+
 export default function App() {
   return (
     <>
