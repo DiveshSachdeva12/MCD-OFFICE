@@ -10,7 +10,8 @@ import KitePassword from './pages/KitePassword';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Gallery from './pages/Gallery';
-
+import AddScheduleForm from './pages/AddScheduleForm';
+import ViewSchedules from './pages/ViewSchedules';
 export default function App() {
   return (
     <>
@@ -23,7 +24,8 @@ export default function App() {
         <Route path="/complaint" element={<ComplaintForm />} />
         <Route path="/kite-distribution" element={<KiteForm />} />
        <Route path="/gallery" element={<Gallery />} />
-
+  <Route path="/add-schedule" element={<AddScheduleForm />} />
+  <Route path="/view-schedules" element={<ViewSchedules />} />
         <Route path="/kite-password" element={<KitePassword />} />
       </Routes>
     </>

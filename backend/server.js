@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
+
 // Load environment variables
 dotenv.config();
 
 // Import routes
 const complaintRoutes = require('./routes/complaintRoutes');
 const kiteRoutes = require('./routes/kiteRoutes');
+const scheduleRoutes = require('./routes/scheduleRoutes');
+
 
 // Create Express app
 const app = express();
@@ -20,6 +23,9 @@ app.use(express.json());
 // Routes
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/kites', kiteRoutes);
+app.use('/api/schedules', scheduleRoutes);
+
+
 
 // Base route to check if server is running
 app.get('/', (req, res) => {

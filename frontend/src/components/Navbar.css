@@ -1,33 +1,18 @@
-.custom-navbar {
-  background-color: #0d6efd;
+.top-header {
+  font-size: 14px;
 }
 
-.small-text {
-  font-size: 0.85rem;
+.navbar-brand {
+  font-size: 1rem;
 }
 
-.navbar-toggler {
-  border: none;
-}
-
-.navbar-toggler:focus {
-  box-shadow: none;
+.navbar-nav .nav-link {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
 }
 
 @media (max-width: 768px) {
-  .top-header {
-    font-size: 12px;
-    flex-direction: column;
-    gap: 5px;
-    text-align: center;
+  .col-md-3 img {
+    display: none !important;
   }
-
-  .custom-navbar .navbar-brand {
-    font-size: 1rem;
-  }
-  .flag{
-    display: none;
-  }
-  
 }
-

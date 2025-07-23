@@ -4,57 +4,80 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navbar.css';
 
 export default function Navbar() {
+  const handleNavItemClick = () => {
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    if (navbarToggler && navbarCollapse.classList.contains('show')) {
+      navbarToggler.click();
+    }
+  };
+
   return (
     <>
       {/* Top Header */}
       <div className="top-header d-flex justify-content-between align-items-center px-3 py-1 bg-white border-bottom small-text">
-        <div style={{ fontFamily: "'Oswald', sans-serif" }}>
-          दिल्ली नगर निगम &nbsp; | &nbsp; MUNICIPAL CORPORATION OF DELHI
+        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '14px' }}>
+          दिल्ली नगर निगम | MUNICIPAL CORPORATION OF DELHI
         </div>
-        <div className="d-flex align-items-center gap-3">
-          <div>SCREEN READER ACCESS</div>
+        <div style={{ fontSize: '13px' }}>SCREEN READER ACCESS</div>
+      </div>
+
+      {/* Logo + Heading + Helpline */}
+      <div className="container-fluid py-2 bg-light border-bottom">
+        <div className="row align-items-center">
+          {/* Logo and Headings */}
+          <div className="col-12 col-md-9 d-md-flex align-items-center">
+            <div className="text-center text-md-start mb-2 mb-md-0 me-md-3">
+              <img src="/mcd.jpg" alt="MCD Logo" style={{ height: '100px' }} />
+            </div>
+
+            <div className="text-center text-md-start w-100">
+              {/* Desktop View */}
+              <>
+                <h6 className="mb-1 fw-bold text-uppercase d-none d-md-block fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  MCD – MUNICIPAL CORPORATION OF DELHI
+                </h6>
+                <h6 className="mb-1 fw-bold text-uppercase d-none d-md-block fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  पंकज लुथरा
+                </h6>
+                <h6 className="mb-0 fw-bold text-uppercase d-none d-md-block fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  निगम पार्षद पंकज लूथरा झिलमिल वार्ड 216
+                </h6>
+              </>
+
+              {/* Mobile View */}
+              <>
+                <h6 className="mb-1 fw-bold text-uppercase d-md-none fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  MCD – MUNICIPAL CORPORATION OF DELHI
+                </h6>
+                <h6 className="mb-1 fw-bold text-uppercase d-md-none fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  पंकज लुथरा
+                </h6>
+                <h6 className="mb-0 fw-bold text-uppercase d-md-none fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  निगम पार्षद पंकज लूथरा झिलमिल वार्ड 216
+                </h6>
+              </>
+            </div>
+          </div>
+
+          {/* Flag + Helpline (Hide on mobile) */}
+          <div className="col-12 col-md-3 text-center text-md-end mt-2 mt-md-0 d-none d-md-block">
+            <div className="d-flex flex-column align-items-center align-items-md-end">
+              <img src="/flag.jpg" alt="India Flag" style={{ height: '45px', marginBottom: '5px' }} />
+              <span className="text-muted fw-semibold" style={{ fontSize: '13px' }}>HELPLINE:</span>
+              <span className="fw-bold text-primary" style={{ fontSize: '14px' }}>8700115912</span>
+              <span className="fw-bold text-primary" style={{ fontSize: '14px' }}>9311981939</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Logo + Heading Section */}
-      <div className="d-flex align-items-start justify-content-start px-4 py-3 bg-light border-bottom flex-wrap gap-4">
-        {/* Logo */}
-        <div>
-          <img src="/mcd.jpg" alt="MCD Logo" style={{ height: '80px' }} />
-        </div>
-
-        {/* Heading in 3 lines */}
-        <div style={{ fontFamily: "'Oswald', sans-serif", textTransform: 'uppercase', color: '#333' }}>
-          <h5 className="mb-1 fw-bold" style={{ fontSize: '1.6rem', letterSpacing: '1px', lineHeight: '1.4' }}>
-            MCD – MUNICIPAL CORPORATION OF DELHI
-          </h5>
-          <h5 className="mb-1 fw-bold" style={{ fontSize: '1.8rem', letterSpacing: '1px', lineHeight: '1.4' }}>
-            पंकज लुथरा
-          </h5>
-          <h5 className="mb-0 fw-bold" style={{ fontSize: '1.4rem', letterSpacing: '1px', lineHeight: '1.4' }}>
-            निगम पार्षद पंकज लूथरा  झिलमिल वार्ड 216
-
-          </h5>
-        </div>
-
-        {/* Helpline with Indian Flag */}
-        {/* Helpline with Indian Flag */}
-{/* Flag + Helpline Section */}
-<div className="ms-auto d-flex align-items-center flex-column flex-lg-row text-uppercase text-center text-lg-start gap-2" style={{ fontFamily: "'Oswald', sans-serif" }}>
-  <img src="/flag.jpg" alt="India Flag" className="mx-auto mx-lg-0 flag" style={{ height: '55px' }} />
-  <div className="d-flex flex-column">
-    <span className="text-muted fw-semibold">HELPLINE:</span>
-    <span className="fw-bold text-primary">8700115912</span>
-    <span className="fw-bold text-primary">9311981939</span>
-  </div>
-</div>
-
-      </div>
-
-      {/* Responsive Navbar */}
-      <nav className="navbar navbar-expand-lg custom-navbar px-3 navbar-dark bg-primary">
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-2 py-2">
         <div className="container-fluid">
-          <Link className="navbar-brand text-white fw-bold text-uppercase" to="/">MCD PORTAL</Link>
+          <Link className="navbar-brand fw-bold text-white text-uppercase" to="/" onClick={handleNavItemClick}>
+            MCD PORTAL
+          </Link>
 
           <button
             className="navbar-toggler"
@@ -71,26 +94,39 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-3">
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/">Home</Link>
+                <Link className="nav-link text-white fw-bold text-uppercase" to="/" onClick={handleNavItemClick}>
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/about">About Us</Link>
+                <Link className="nav-link text-white fw-bold text-uppercase" to="/about" onClick={handleNavItemClick}>
+                  About Us
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/complaint">Complaint Form</Link>
+                <Link className="nav-link text-white fw-bold text-uppercase" to="/complaint" onClick={handleNavItemClick}>
+                  Complaint Form
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/kite-password">Kite Distribution</Link>
+                <Link className="nav-link text-white fw-bold text-uppercase" to="/kite-password" onClick={handleNavItemClick}>
+                  Kite Distribution
+                </Link>
               </li>
               <li className="nav-item">
-  <Link className="nav-link text-white fw-bold text-uppercase" to="/gallery">Gallery</Link>
-</li>
-
+                <Link className="nav-link text-white fw-bold text-uppercase" to="/gallery" onClick={handleNavItemClick}>
+                  Gallery
+                </Link>
+              </li>
             </ul>
-
             <div className="d-flex gap-2 mt-2 mt-lg-0">
-<Link to="/admin-login" className="btn btn-danger btn-sm text-uppercase fw-bold">Admin Department</Link>
-
+              <Link
+                to="/admin-login"
+                className="btn btn-danger btn-sm text-uppercase fw-bold"
+                onClick={handleNavItemClick}
+              >
+                Admin Department
+              </Link>
             </div>
           </div>
         </div>

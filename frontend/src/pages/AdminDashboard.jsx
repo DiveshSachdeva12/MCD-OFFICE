@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
+import AddScheduleForm from './AddScheduleForm';
+import ViewSchedules from './ViewSchedules';
 
 export default function AdminDashboard() {
   const [view, setView] = useState('');
@@ -164,126 +166,138 @@ export default function AdminDashboard() {
     <div className="container mt-5">
       <h2 className="mb-4 text-center">Admin Dashboard</h2>
 
-      <div className="d-flex justify-content-center gap-3 mb-4">
+      <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
         <button className="btn btn-primary" onClick={() => setView('complaints')}>Complaint All Data</button>
         <button className="btn btn-success" onClick={() => setView('kites')}>Kite Distribution Record</button>
+        <button className="btn btn-warning" onClick={() => setView('addSchedule')}>Add Schedule</button>
+        <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
       </div>
 
+     
+            
+       
       {view === 'complaints' && (
-        <div>
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Complaints</h4>
-            <button className="btn btn-outline-secondary btn-sm" onClick={exportCSV}>Export CSV</button>
-          </div>
+  <div>
+    {/* Complaints View */}
+    <div className="d-flex justify-content-between align-items-center">
+      <h4>Complaints</h4>
+      <button className="btn btn-outline-secondary btn-sm" onClick={exportCSV}>Export CSV</button>
+    </div>
 
-          <input
-            className="form-control my-3"
-            placeholder="Search by ID, phone, name, etc."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+    <input
+      className="form-control my-3"
+      placeholder="Search by ID, phone, name, etc."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
 
-          <table className="table table-bordered mt-2">
-            <thead className="table-dark">
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Complaint</th>
-                <th>Remarks</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredComplaints.map((c, index) => (
-                <tr
-                  key={index}
-                  className={c.status === 'completed' ? 'table-success' : 'table-danger'}
-                >
-                  <td>{c.complaintId}</td>
-                  <td>
-                    {editingComplaintId === c._id ? (
-                      <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
-                    ) : c.name}
-                  </td>
-                  <td>
-                    {editingComplaintId === c._id ? (
-                      <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
-                    ) : c.phone}
-                  </td>
-                  <td>
-                    {editingComplaintId === c._id ? (
-                      <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
-                    ) : c.address}
-                  </td>
-                  <td>
-                    {editingComplaintId === c._id ? (
-                      <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
-                    ) : c.details}
-                  </td>
-                  <td>
-                    {editingComplaintId === c._id ? (
-                      <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
-                    ) : c.remarks || ''}
-                  </td>
-                  <td>
-                    <div className="d-flex align-items-center gap-2 flex-nowrap">
-                      {editingComplaintId === c._id ? (
-                        <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
-                          Save
-                        </button>
-                      ) : (
-                        <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>
-                          Edit
-                        </button>
-                      )}
-                      <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>
-                        Toggle
-                      </button>
-                      <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+    <table className="table table-bordered mt-2">
+      <thead className="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Complaint</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredComplaints.map((c, index) => (
+          <tr
+            key={index}
+            className={c.status === 'completed' ? 'table-success' : 'table-danger'}
+          >
+            <td>{c.complaintId}</td>
+            <td>
+              {editingComplaintId === c._id ? (
+                <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
+              ) : c.name}
+            </td>
+            <td>
+              {editingComplaintId === c._id ? (
+                <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
+              ) : c.phone}
+            </td>
+            <td>
+              {editingComplaintId === c._id ? (
+                <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
+              ) : c.address}
+            </td>
+            <td>
+              {editingComplaintId === c._id ? (
+                <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
+              ) : c.details}
+            </td>
+            <td>
+              {editingComplaintId === c._id ? (
+                <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
+              ) : c.remarks || ''}
+            </td>
+            <td>
+              <div className="d-flex align-items-center gap-2 flex-nowrap">
+                {editingComplaintId === c._id ? (
+                  <button className="btn btn-sm btn-success" onClick={handleSaveClick}>Save</button>
+                ) : (
+                  <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>Edit</button>
+                )}
+                <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>Toggle</button>
+                <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>Delete</button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
 
-      {view === 'kites' && (
-        <div>
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Kite Records</h4>
-            <button className="btn btn-outline-secondary btn-sm" onClick={exportKiteCSV}>Export CSV</button>
-          </div>
+{view === 'kites' && (
+  <div>
+    {/* Kite Records View */}
+    <div className="d-flex justify-content-between align-items-center">
+      <h4>Kite Records</h4>
+      <button className="btn btn-outline-secondary btn-sm" onClick={exportKiteCSV}>Export CSV</button>
+    </div>
 
-          <table className="table table-bordered mt-2">
-            <thead className="table-dark">
-              <tr>
-                <th>Aadhaar</th>
-                <th>Name</th>
-                <th>Number of Kites</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {kites.map((k, index) => (
-                <tr key={index}>
-                  <td>{k.aadhaar}</td>
-                  <td>{k.name}</td>
-                  <td>{k.quantity}</td>
-                  <td>
-                    <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+    <table className="table table-bordered mt-2">
+      <thead className="table-dark">
+        <tr>
+          <th>Aadhaar</th>
+          <th>Name</th>
+          <th>Number of Kites</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {kites.map((k, index) => (
+          <tr key={index}>
+            <td>{k.aadhaar}</td>
+            <td>{k.name}</td>
+            <td>{k.quantity}</td>
+            <td>
+              <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{view === 'addSchedule' && (
+  <div>
+    <AddScheduleForm />
+  </div>
+)}
+
+{view === 'viewSchedules' && (
+  <div>
+    <ViewSchedules />
+  </div>
+)}
+
     </div>
   );
 }
