@@ -23,7 +23,7 @@ export default function AdminDashboard() {
       const res = await axios.get(`${BASE_URL}/api/complaints`);
       setComplaints(res.data);
     } catch (err) {
-      console.error(err);
+      Swal.fire('Error', 'Failed to fetch complaints', 'error');
     }
   };
 
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
       const res = await axios.get(`${BASE_URL}/api/kites`);
       setKites(res.data);
     } catch (err) {
-      console.error(err);
+      Swal.fire('Error', 'Failed to fetch kite records', 'error');
     }
   };
 
@@ -52,8 +52,7 @@ export default function AdminDashboard() {
         await axios.delete(`${BASE_URL}/api/complaints/${id}`);
         fetchComplaints();
         Swal.fire('Deleted!', 'The complaint has been deleted.', 'success');
-      } catch (error) {
-        console.error(error);
+      } catch {
         Swal.fire('Error', 'Error deleting complaint', 'error');
       }
     }
@@ -64,8 +63,7 @@ export default function AdminDashboard() {
     try {
       await axios.put(`${BASE_URL}/api/complaints/${id}`, { status: newStatus });
       fetchComplaints();
-    } catch (error) {
-      console.error(error);
+    } catch {
       Swal.fire('Error', 'Failed to update status', 'error');
     }
   };
@@ -90,8 +88,7 @@ export default function AdminDashboard() {
         setEditingComplaintId(null);
         fetchComplaints();
         Swal.fire('Saved!', 'The complaint has been updated.', 'success');
-      } catch (error) {
-        console.error(error);
+      } catch {
         Swal.fire('Error', 'Error saving complaint', 'error');
       }
     }
@@ -113,8 +110,7 @@ export default function AdminDashboard() {
         await axios.delete(`${BASE_URL}/api/kites/${id}`);
         fetchKites();
         Swal.fire('Deleted!', 'The kite record has been deleted.', 'success');
-      } catch (error) {
-        console.error(error);
+      } catch {
         Swal.fire('Error', 'Error deleting kite record', 'error');
       }
     }
@@ -131,6 +127,7 @@ export default function AdminDashboard() {
       c.details,
       c.remarks || ''
     ]);
+
     let csvContent = 'data:text/csv;charset=utf-8,';
     csvContent += headers.join(',') + '\n';
     rows.forEach(row => {
@@ -192,64 +189,74 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-  {filteredComplaints.map((c, index) => (
-    <tr
-      key={index}
-      className={c.status === 'completed' ? 'table-success' : 'table-danger'}
-    >
-      <td>{c.complaintId}</td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.name || ''} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
-        ) : (c.name || '—')}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.phone || ''} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
-        ) : (c.phone || '—')}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.address || ''} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
-        ) : (c.address || '—')}
-      </td>
-     <td>
-  {editingComplaintId === c._id ? (
-    <input
-      value={editedComplaint.department || ''}
-      onChange={e =>
-        setEditedComplaint({ ...editedComplaint, department: e.target.value })
-      }
-    />
-  ) : (c.department || '—')}
-</td>
-
-
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.details || ''} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
-        ) : (c.details || '—')}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
-        ) : (c.remarks || '—')}
-      </td>
-      <td>
-        <div className="d-flex gap-2">
-          {editingComplaintId === c._id ? (
-            <button className="btn btn-sm btn-success" onClick={handleSaveClick}>Save</button>
-          ) : (
-            <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>Edit</button>
-          )}
-          <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>Toggle</button>
-          <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>Delete</button>
-        </div>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+                {filteredComplaints.map((c, index) => (
+                  <tr
+                    key={index}
+                    className={c.status === 'completed' ? 'table-success' : 'table-danger'}
+                  >
+                    <td>{c.complaintId}</td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.name || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })}
+                        />
+                      ) : (c.name || '—')}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.phone || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })}
+                        />
+                      ) : (c.phone || '—')}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.address || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })}
+                        />
+                      ) : (c.address || '—')}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.department || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, department: e.target.value })}
+                        />
+                      ) : (c.department || '—')}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.details || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })}
+                        />
+                      ) : (c.details || '—')}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input
+                          value={editedComplaint.remarks || ''}
+                          onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })}
+                        />
+                      ) : (c.remarks || '—')}
+                    </td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        {editingComplaintId === c._id ? (
+                          <button className="btn btn-sm btn-success" onClick={handleSaveClick}>Save</button>
+                        ) : (
+                          <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>Edit</button>
+                        )}
+                        <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>Toggle</button>
+                        <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>
