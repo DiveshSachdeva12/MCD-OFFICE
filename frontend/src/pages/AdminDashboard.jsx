@@ -156,12 +156,12 @@ export default function AdminDashboard() {
 
       <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
         <button className="btn btn-primary" onClick={() => setView('complaints')}>Complaint All Data</button>
+        <Link to="/kite-distribution" className="btn btn-danger text-uppercase fw-bold">
+        Kite Distribution Panel
+      </Link>
         <button className="btn btn-success" onClick={() => setView('kites')}>Kite Distribution Record</button>
         <button className="btn btn-warning" onClick={() => setView('addSchedule')}>Add Schedule</button>
         <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
-        <Link to="/kite-distribution" className="btn btn-danger text-uppercase fw-bold">
-  Kite Distribution Panel
-</Link>
 
 
 
