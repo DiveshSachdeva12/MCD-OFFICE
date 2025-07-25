@@ -67,6 +67,20 @@ const ComplaintForm = () => {
         >
           <h4 className="fw-bold">📄 शिकायत फॉर्म / COMPLAINT FORM</h4>
         </div>
+        <div className="col-12">
+  <div
+    className="alert alert-warning d-flex align-items-start p-3 rounded-3 shadow-sm"
+    role="alert"
+    style={{ fontSize: "1.1rem", backgroundColor: "#fff3cd", borderLeft: "5px solid #ffc107" }}
+  >
+    <span className="me-3 fs-3">⚠️</span>
+    <div>
+      <strong>नोट:</strong> कृपया अपनी <strong>Complaint ID</strong> को सुरक्षित रखें। भविष्य में आपकी शिकायत का समाधान इसी ID के आधार पर किया जाएगा।
+      <br />
+      <strong>Note:</strong> Please save your <strong>Complaint ID</strong>. It will be used to resolve your complaint in future.
+    </div>
+  </div>
+</div>
 
         <div className="card-body px-4 px-md-5 py-4 bg-light">
           <form onSubmit={handleSubmit}>
