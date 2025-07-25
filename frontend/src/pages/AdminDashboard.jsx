@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
 import AddScheduleForm from './AddScheduleForm';
 import ViewSchedules from './ViewSchedules';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const [view, setView] = useState('');
@@ -158,6 +159,12 @@ export default function AdminDashboard() {
         <button className="btn btn-success" onClick={() => setView('kites')}>Kite Distribution Record</button>
         <button className="btn btn-warning" onClick={() => setView('addSchedule')}>Add Schedule</button>
         <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
+        <Link to="/kite-distribution" className="btn btn-danger text-uppercase fw-bold">
+  Kite Distribution Panel
+</Link>
+
+
+
       </div>
 
       {view === 'complaints' && (

@@ -109,11 +109,6 @@ export default function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/kite-password" onClick={handleNavItemClick}>
-                  Kite Distribution
-                </Link>
-              </li>
-              <li className="nav-item">
                 <Link className="nav-link text-white fw-bold text-uppercase" to="/gallery" onClick={handleNavItemClick}>
                   Gallery
                 </Link>
