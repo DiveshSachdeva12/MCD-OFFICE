@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaUser, FaPhoneAlt, FaHome, FaAlignLeft, FaHashtag } from 'react-icons/fa';
+import { FaUser, FaPhoneAlt, FaHome, FaAlignLeft, FaHashtag, FaBuilding } from 'react-icons/fa';
 import { BASE_URL } from '../api/baseUrl';
+
 const ComplaintForm = () => {
   const [form, setForm] = useState({
     complaintId: 'C' + Date.now(),
     name: '',
     phone: '',
     address: '',
+    department: '',
     details: ''
   });
 
@@ -26,21 +28,24 @@ const ComplaintForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting Complaint:", form);  // 👈 Add this
+
     try {
       await axios.post(`${BASE_URL}/api/complaints`, form);
 
-    Swal.fire({
-  title: "Success!",
-  text: "Your complaint has been submitted successfully.",
-  icon: "success",
-  confirmButtonText: "OK"
-});
+      Swal.fire({
+        title: "Success!",
+        text: "Your complaint has been submitted successfully.",
+        icon: "success",
+        confirmButtonText: "OK"
+      });
 
       setForm({
         complaintId: 'C' + Date.now(),
         name: '',
         phone: '',
         address: '',
+        department: '',
         details: ''
       });
     } catch (err) {
@@ -97,30 +102,29 @@ const ComplaintForm = () => {
                 />
               </div>
 
-            <div className="col-md-6">
-  <label className="form-label fw-semibold">
-    <FaPhoneAlt className="me-2 text-secondary" /> Phone Number
-  </label>
-  <input
-    type="text"
-    name="phone"
-    className="form-control"
-    placeholder="10 अंकों का मोबाइल नंबर"
-    value={form.phone}
-    onChange={handleChange}
-    inputMode="numeric"
-    pattern="\d{10}"
-    maxLength="10"
-    title="10 अंकों का मोबाइल नंबर दर्ज करें"
-    onKeyPress={(e) => {
-      if (!/[0-9]/.test(e.key)) {
-        e.preventDefault();
-      }
-    }}
-    required
-  />
-</div>
-
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">
+                  <FaPhoneAlt className="me-2 text-secondary" /> Phone Number
+                </label>
+                <input
+                  type="text"
+                  name="phone"
+                  className="form-control"
+                  placeholder="10 अंकों का मोबाइल नंबर"
+                  value={form.phone}
+                  onChange={handleChange}
+                  inputMode="numeric"
+                  pattern="\d{10}"
+                  maxLength="10"
+                  title="10 अंकों का मोबाइल नंबर दर्ज करें"
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  required
+                />
+              </div>
 
               <div className="col-md-6">
                 <label className="form-label fw-semibold">
@@ -136,6 +140,30 @@ const ComplaintForm = () => {
                   required
                   minLength={10}
                 />
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">
+                  <FaBuilding className="me-2 text-secondary" /> Complaint Department
+                </label>
+                <select
+                  name="department"
+                  className="form-select"
+                  value={form.department}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">-- विभाग चुनें / Select Department --</option>
+                  <option value="AADHAAR CARD ISSUE">AADHAAR CARD ISSUE</option>
+                  <option value="PAN CARD ISSUE">PAN CARD ISSUE</option>
+                  <option value="SEWER PROBLEM">SEWER PROBLEM</option>
+                  <option value="WATER SUPPLY ISSUE">WATER SUPPLY ISSUE</option>
+                  <option value="STREET LIGHT NOT WORKING">STREET LIGHT NOT WORKING</option>
+                  <option value="ROAD OR DRAIN DAMAGE">ROAD OR DRAIN DAMAGE</option>
+                  <option value="GARBAGE COLLECTION">GARBAGE COLLECTION</option>
+                  <option value="PROPERTY TAX RELATED">PROPERTY TAX RELATED</option>
+                  <option value="OTHER">OTHER</option>
+                </select>
               </div>
 
               <div className="col-12">

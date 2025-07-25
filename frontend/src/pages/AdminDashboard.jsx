@@ -70,29 +70,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const deleteKite = async (id) => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you really want to delete this kite record?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`${BASE_URL}/api/kites/${id}`);
-        fetchKites();
-        Swal.fire('Deleted!', 'The kite record has been deleted.', 'success');
-      } catch (error) {
-        console.error(error);
-        Swal.fire('Error', 'Error deleting kite record', 'error');
-      }
-    }
-  };
-
   const handleEditClick = (complaint) => {
     setEditingComplaintId(complaint._id);
     setEditedComplaint({ ...complaint });
@@ -120,9 +97,40 @@ export default function AdminDashboard() {
     }
   };
 
+  const deleteKite = async (id) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you really want to delete this kite record?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${BASE_URL}/api/kites/${id}`);
+        fetchKites();
+        Swal.fire('Deleted!', 'The kite record has been deleted.', 'success');
+      } catch (error) {
+        console.error(error);
+        Swal.fire('Error', 'Error deleting kite record', 'error');
+      }
+    }
+  };
+
   const exportCSV = () => {
-    const headers = ['ID', 'Name', 'Phone', 'Address', 'Complaint', 'Remarks'];
-    const rows = complaints.map(c => [c.complaintId, c.name, c.phone, c.address, c.details, c.remarks || '']);
+    const headers = ['ID', 'Name', 'Phone', 'Address', 'Department', 'Complaint', 'Remarks'];
+    const rows = complaints.map(c => [
+      c.complaintId,
+      c.name,
+      c.phone,
+      c.address,
+      c.department || '',
+      c.details,
+      c.remarks || ''
+    ]);
     let csvContent = 'data:text/csv;charset=utf-8,';
     csvContent += headers.join(',') + '\n';
     rows.forEach(row => {
@@ -133,24 +141,6 @@ export default function AdminDashboard() {
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
     link.setAttribute('download', 'complaints.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const exportKiteCSV = () => {
-    const headers = ['Aadhaar', 'Name', 'Number of Kites'];
-    const rows = kites.map(k => [k.aadhaar, k.name, k.quantity]);
-    let csvContent = 'data:text/csv;charset=utf-8,';
-    csvContent += headers.join(',') + '\n';
-    rows.forEach(row => {
-      csvContent += row.join(',') + '\n';
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'kite_records.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -173,137 +163,133 @@ export default function AdminDashboard() {
         <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
       </div>
 
-     
-            
-       
       {view === 'complaints' && (
-  <div>
-    {/* Complaints View */}
-    <div className="d-flex justify-content-between align-items-center">
-      <h4>Complaints</h4>
-      <button className="btn btn-outline-secondary btn-sm" onClick={exportCSV}>Export CSV</button>
-    </div>
+        <div>
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Complaints</h4>
+            <button className="btn btn-outline-secondary btn-sm" onClick={exportCSV}>Export CSV</button>
+          </div>
 
+          <input
+            className="form-control my-3"
+            placeholder="Search by ID, phone, name, etc."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
+          <div className="table-responsive" style={{ maxHeight: '70vh', overflow: 'auto' }}>
+            <table className="table table-bordered">
+              <thead className="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>Department</th>
+                  <th>Complaint</th>
+                  <th>Remarks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+  {filteredComplaints.map((c, index) => (
+    <tr
+      key={index}
+      className={c.status === 'completed' ? 'table-success' : 'table-danger'}
+    >
+      <td>{c.complaintId}</td>
+      <td>
+        {editingComplaintId === c._id ? (
+          <input value={editedComplaint.name || ''} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
+        ) : (c.name || '—')}
+      </td>
+      <td>
+        {editingComplaintId === c._id ? (
+          <input value={editedComplaint.phone || ''} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
+        ) : (c.phone || '—')}
+      </td>
+      <td>
+        {editingComplaintId === c._id ? (
+          <input value={editedComplaint.address || ''} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
+        ) : (c.address || '—')}
+      </td>
+     <td>
+  {editingComplaintId === c._id ? (
     <input
-      className="form-control my-3"
-      placeholder="Search by ID, phone, name, etc."
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
+      value={editedComplaint.department || ''}
+      onChange={e =>
+        setEditedComplaint({ ...editedComplaint, department: e.target.value })
+      }
     />
+  ) : (c.department || '—')}
+</td>
 
 
-<div className="table-responsive">
+      <td>
+        {editingComplaintId === c._id ? (
+          <input value={editedComplaint.details || ''} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
+        ) : (c.details || '—')}
+      </td>
+      <td>
+        {editingComplaintId === c._id ? (
+          <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
+        ) : (c.remarks || '—')}
+      </td>
+      <td>
+        <div className="d-flex gap-2">
+          {editingComplaintId === c._id ? (
+            <button className="btn btn-sm btn-success" onClick={handleSaveClick}>Save</button>
+          ) : (
+            <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>Edit</button>
+          )}
+          <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>Toggle</button>
+          <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>Delete</button>
+        </div>
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-    <table className="table table-bordered mt-2">
-      <thead className="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Address</th>
-          <th>Complaint</th>
-          <th>Remarks</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filteredComplaints.map((c, index) => (
-          <tr
-            key={index}
-            className={c.status === 'completed' ? 'table-success' : 'table-danger'}
-          >
-            <td>{c.complaintId}</td>
-            <td>
-              {editingComplaintId === c._id ? (
-                <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
-              ) : c.name}
-            </td>
-            <td>
-              {editingComplaintId === c._id ? (
-                <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
-              ) : c.phone}
-            </td>
-            <td>
-              {editingComplaintId === c._id ? (
-                <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
-              ) : c.address}
-            </td>
-            <td>
-              {editingComplaintId === c._id ? (
-                <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
-              ) : c.details}
-            </td>
-            <td>
-              {editingComplaintId === c._id ? (
-                <input value={editedComplaint.remarks || ''} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
-              ) : c.remarks || ''}
-            </td>
-            <td>
-              <div className="d-flex align-items-center gap-2 flex-nowrap">
-                {editingComplaintId === c._id ? (
-                  <button className="btn btn-sm btn-success" onClick={handleSaveClick}>Save</button>
-                ) : (
-                  <button className="btn btn-sm btn-warning" onClick={() => handleEditClick(c)}>Edit</button>
-                )}
-                <button className="btn btn-sm btn-info" onClick={() => toggleStatus(c._id, c.status)}>Toggle</button>
-                <button className="btn btn-sm btn-danger" onClick={() => deleteComplaint(c._id)}>Delete</button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    </div>
-  </div>
-)}
+            </table>
+          </div>
+        </div>
+      )}
 
-{view === 'kites' && (
-  <div>
-    {/* Kite Records View */}
-    <div className="d-flex justify-content-between align-items-center">
-      <h4>Kite Records</h4>
-      <button className="btn btn-outline-secondary btn-sm" onClick={exportKiteCSV}>Export CSV</button>
-    </div>
-<div className="table-responsive">
+      {view === 'kites' && (
+        <div>
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Kite Records</h4>
+          </div>
 
-    <table className="table table-bordered mt-2">
-      <thead className="table-dark">
-        <tr>
-          <th>Aadhaar</th>
-          <th>Name</th>
-          <th>Number of Kites</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {kites.map((k, index) => (
-          <tr key={index}>
-            <td>{k.aadhaar}</td>
-            <td>{k.name}</td>
-            <td>{k.quantity}</td>
-            <td>
-              <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>Delete</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    </div>
-  </div>
-)}
+          <div className="table-responsive" style={{ maxHeight: '70vh', overflow: 'auto' }}>
+            <table className="table table-bordered mt-2">
+              <thead className="table-dark">
+                <tr>
+                  <th>Aadhaar</th>
+                  <th>Name</th>
+                  <th>Number of Kites</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {kites.map((k, index) => (
+                  <tr key={index}>
+                    <td>{k.aadhaar}</td>
+                    <td>{k.name}</td>
+                    <td>{k.quantity}</td>
+                    <td>
+                      <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-{view === 'addSchedule' && (
-  <div>
-    <AddScheduleForm />
-  </div>
-)}
-
-{view === 'viewSchedules' && (
-  <div>
-    <ViewSchedules />
-  </div>
-)}
-
+      {view === 'addSchedule' && <AddScheduleForm />}
+      {view === 'viewSchedules' && <ViewSchedules />}
     </div>
   );
 }

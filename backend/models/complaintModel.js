@@ -8,15 +8,18 @@ const complaintSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   address: { type: String, required: true },
   details: { type: String, required: true },
+  department: { type: String },
   status: {
     type: String,
     enum: ['pending', 'completed'],
     default: 'pending',
   },
   // Add 'remarks' in schema if not present
-remarks: { type: String },
-
+  
+  
   createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);
+
+remarks: { type: String }
