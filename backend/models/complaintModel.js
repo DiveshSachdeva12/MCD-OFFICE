@@ -14,12 +14,8 @@ const complaintSchema = new mongoose.Schema({
     enum: ['pending', 'completed'],
     default: 'pending',
   },
-  // Add 'remarks' in schema if not present
-  
-  
+  remarks: { type: String }, // ✅ ADDED HERE CORRECTLY
   createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);
-
-remarks: { type: String }
