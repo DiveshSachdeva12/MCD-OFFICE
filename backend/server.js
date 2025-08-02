@@ -1,8 +1,8 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
 
 // Load environment variables
 dotenv.config();
@@ -11,7 +11,9 @@ dotenv.config();
 const complaintRoutes = require('./routes/complaintRoutes');
 const kiteRoutes = require('./routes/kiteRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
-
+const aadhaarRoutes = require('./routes/aadhaarRoutes');
+const pensionRoutes = require('./routes/pensionRoutes');
+const voterRoutes = require('./routes/voterRoutes'); // ✅ must match filename
 
 // Create Express app
 const app = express();
@@ -24,16 +26,14 @@ app.use(express.json());
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/kites', kiteRoutes);
 app.use('/api/schedules', scheduleRoutes);
-app.use('/api', require('./routes/scheduleRoutes'));
-
-
-
-// Base route to check if server is running
+app.use('/api/aadhaar', aadhaarRoutes);
+app.use('/api/pension', pensionRoutes);
+app.use('/api/voterid', voterRoutes);
 app.get('/', (req, res) => {
-  res.send('MCD Portal Backend is running...');
+  res.send('✅ MCD Portal Backend is running...');
 });
 
-// Connect to MongoDB and start server
+// MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,

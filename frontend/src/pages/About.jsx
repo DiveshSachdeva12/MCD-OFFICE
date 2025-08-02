@@ -10,8 +10,7 @@ const About = () => {
         public welfare activities.
       </p>
 
-      <div className="row g-4">
-        {/* Card 1 */}
+      <div className="row g-4"> 
         <div className="col-md-4">
           <div className="card shadow-lg border-0 h-100">
             <div className="card-body text-center">

@@ -93,100 +93,110 @@ export default function AddScheduleForm() {
     <div className="card p-4">
       <h5>Add Program Schedule</h5>
       <form onSubmit={handleSubmit}>
-        <div className="mb-2">
-          <label>Program Name</label>
-          <input
-            className={`form-control ${errors.programName ? 'is-invalid' : ''}`}
-            name="programName"
-            value={formData.programName}
-            onChange={handleChange}
-          />
-          {errors.programName && <div className="invalid-feedback">{errors.programName}</div>}
-        </div>
+        <div className="row">
+          {/* LEFT SIDE */}
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label>Program Name</label>
+              <input
+                className={`form-control ${errors.programName ? 'is-invalid' : ''}`}
+                name="programName"
+                value={formData.programName}
+                onChange={handleChange}
+              />
+              {errors.programName && <div className="invalid-feedback">{errors.programName}</div>}
+            </div>
 
-        <div className="mb-2">
-          <label>Date (DD-MM-YYYY)</label>
-          <input
-            type="date"
-            className={`form-control ${errors.date ? 'is-invalid' : ''}`}
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-          />
-          {errors.date && <div className="invalid-feedback">{errors.date}</div>}
-        </div>
+            <div className="mb-3">
+              <label>Date (DD-MM-YYYY)</label>
+              <input
+                type="date"
+                className={`form-control ${errors.date ? 'is-invalid' : ''}`}
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+              />
+              {errors.date && <div className="invalid-feedback">{errors.date}</div>}
+            </div>
 
-        <div className="mb-2 d-flex gap-2">
-          <div className="flex-grow-1">
-            <label>Time</label>
-            <input
-              type="time"
-              className={`form-control ${errors.time ? 'is-invalid' : ''}`}
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
-            />
-            {errors.time && <div className="invalid-feedback">{errors.time}</div>}
+            <div className="mb-3 d-flex gap-2">
+              <div className="flex-grow-1">
+                <label>Time</label>
+                <input
+                  type="time"
+                  className={`form-control ${errors.time ? 'is-invalid' : ''}`}
+                  name="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                />
+                {errors.time && <div className="invalid-feedback">{errors.time}</div>}
+              </div>
+              <div style={{ minWidth: '90px' }}>
+                <label>AM/PM</label>
+                <select
+                  className="form-control"
+                  name="meridiem"
+                  value={formData.meridiem}
+                  onChange={handleChange}
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label>Venue</label>
+              <input
+                className={`form-control ${errors.venue ? 'is-invalid' : ''}`}
+                name="venue"
+                value={formData.venue}
+                onChange={handleChange}
+              />
+              {errors.venue && <div className="invalid-feedback">{errors.venue}</div>}
+            </div>
           </div>
-          <div>
-            <label>AM/PM</label>
-            <select
-              className="form-control"
-              name="meridiem"
-              value={formData.meridiem}
-              onChange={handleChange}
-            >
-              <option value="AM">AM</option>
-              <option value="PM">PM</option>
-            </select>
+
+          {/* RIGHT SIDE */}
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label>Contact Person</label>
+              <input
+                className={`form-control ${errors.contactPerson ? 'is-invalid' : ''}`}
+                name="contactPerson"
+                value={formData.contactPerson}
+                onChange={handleChange}
+              />
+              {errors.contactPerson && <div className="invalid-feedback">{errors.contactPerson}</div>}
+            </div>
+
+            <div className="mb-3">
+              <label>Contact Number</label>
+              <input
+                className={`form-control ${errors.contactNumber ? 'is-invalid' : ''}`}
+                name="contactNumber"
+                value={formData.contactNumber}
+                onChange={handleChange}
+                maxLength="10"
+              />
+              {errors.contactNumber && <div className="invalid-feedback">{errors.contactNumber}</div>}
+            </div>
+
+            <div className="mb-3">
+              <label>Description</label>
+              <textarea
+                className="form-control"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="mb-2">
-          <label>Venue</label>
-          <input
-            className={`form-control ${errors.venue ? 'is-invalid' : ''}`}
-            name="venue"
-            value={formData.venue}
-            onChange={handleChange}
-          />
-          {errors.venue && <div className="invalid-feedback">{errors.venue}</div>}
+        <div className="text-center">
+          <button type="submit" className="btn btn-primary px-4">Add Schedule</button>
         </div>
-
-        <div className="mb-2">
-          <label>Contact Person</label>
-          <input
-            className={`form-control ${errors.contactPerson ? 'is-invalid' : ''}`}
-            name="contactPerson"
-            value={formData.contactPerson}
-            onChange={handleChange}
-          />
-          {errors.contactPerson && <div className="invalid-feedback">{errors.contactPerson}</div>}
-        </div>
-
-        <div className="mb-2">
-          <label>Contact Number</label>
-          <input
-            className={`form-control ${errors.contactNumber ? 'is-invalid' : ''}`}
-            name="contactNumber"
-            value={formData.contactNumber}
-            onChange={handleChange}
-            maxLength="10"
-          />
-          {errors.contactNumber && <div className="invalid-feedback">{errors.contactNumber}</div>}
-        </div>
-
-        <div className="mb-2">
-          <label>Description</label>
-          <textarea
-            className="form-control"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary">Add Schedule</button>
       </form>
     </div>
   );

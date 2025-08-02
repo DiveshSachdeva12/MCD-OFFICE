@@ -12,6 +12,8 @@ import {
   faEdit, faTrash, faSave, faCopy, faSync,
   faFileCsv, faFilePdf
 } from '@fortawesome/free-solid-svg-icons';
+import * as XLSX from 'xlsx';
+
 
 export default function AdminDashboard() {
   const [view, setView] = useState('');
@@ -20,10 +22,33 @@ export default function AdminDashboard() {
   const [editingComplaintId, setEditingComplaintId] = useState(null);
   const [editedComplaint, setEditedComplaint] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [aadhaarData, setAadhaarData] = useState([]);
+
+  const [aadhaarSearch, setAadhaarSearch] = useState('');
+  const [pensionSearch, setPensionSearch] = useState('');
+  const [voterSearch, setVoterSearch] = useState('');
+  const [editedAadhaarData, setEditedAadhaarData] = useState({});
+  const [showEditModal, setShowEditModal] = useState(false);
+  // At the top of AdminDashboard.jsx
+  const [pensionData, setPensionData] = useState([]);
+  const [voterIdData, setVoterIdData] = useState([]);
+
+  // For modals
+  const [showPensionEditModal, setShowPensionEditModal] = useState(false);
+  const [showVoterEditModal, setShowVoterEditModal] = useState(false);
+
+  // Form data
+  const [pensionFormData, setPensionFormData] = useState({ _id: '', name: '', age: '', bank: '' });
+  const [voterFormData, setVoterFormData] = useState({ _id: '', fullName: '', mobile: '', applicationNo: '', voterCardNo: '' });
+
 
   useEffect(() => {
     if (view === 'complaints') fetchComplaints();
     if (view === 'kites') fetchKites();
+    if (view === 'aadhaar') fetchAadhaar();
+    if (view === 'pension') fetchPension();
+    if (view === 'voterid') fetchVoterId();
+
   }, [view]);
 
   const fetchComplaints = async () => {
@@ -163,6 +188,103 @@ export default function AdminDashboard() {
       value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
+  const fetchAadhaar = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/aadhaar`);
+      setAadhaarData(data);
+    } catch {
+      Swal.fire('Error', 'Failed to fetch Aadhaar', 'error');
+    }
+  };
+
+
+  const fetchPension = async () => {
+    try { const { data } = await axios.get(`${BASE_URL}/api/pension`); setPensionData(data); }
+    catch { Swal.fire('Error', 'Failed to fetch Pension', 'error'); }
+  };
+
+  const fetchVoterId = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/voterid`);
+      setVoterIdData(data); // or whatever your setter is
+    } catch (error) {
+      console.error('Error fetching voter ID data:', error);
+      Swal.fire('Error', 'Failed to fetch Voter ID data', 'error');
+    }
+  };
+
+  const exportTablePDF = async (elementId, title) => {
+    const el = document.getElementById(elementId);
+    if (!el) return Swal.fire('Error', 'Table not found', 'error');
+    const canvas = await html2canvas(el);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('l', 'mm', 'a4');
+    const w = pdf.internal.pageSize.getWidth();
+    const h = (canvas.height * w) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 0, 10, w, h);
+    pdf.save(`${title}.pdf`);
+  };
+  const exportTableExcel = (headers, rows, filename = 'data') => {
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+  };
+
+  const handleDeleteAadhaar = async (id) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this Aadhaar record?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${BASE_URL}/api/aadhaar/${id}`);
+        Swal.fire('Deleted!', 'Aadhaar record has been deleted.', 'success');
+        fetchAadhaar(); // ✅ Use this, NOT fetchAadhaarData
+      } catch (err) {
+        Swal.fire('Error', 'Failed to delete Aadhaar record', 'error');
+      }
+    }
+  };
+
+  const handleEditAadhaar = (aadhaarItem) => {
+    setEditedAadhaarData(aadhaarItem);
+    setShowEditModal(true);
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedAadhaarData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveEditedAadhaar = async () => {
+    try {
+      await axios.put(`${BASE_URL}/api/aadhaar/byNumber/${editedAadhaarData.aadhaarNumber}`, editedAadhaarData);
+
+
+      Swal.fire('Success', 'Aadhaar record updated.', 'success');
+      setShowEditModal(false);
+      fetchAadhaar(); // Refresh list
+    } catch (err) {
+      Swal.fire('Error', 'Failed to update record', 'error');
+    }
+  };
+  const handleEditPension = (pensionItem) => {
+    Swal.fire('Edit Clicked', `Coming Soon: ${pensionItem.fullName}`, 'info');
+  };
+
+
+  const handleEditVoter = (voterItem) => {
+    Swal.fire('Edit Clicked', `Coming Soon: ${voterItem.fullName}`, 'info');
+  };
+
+
 
   return (
     <div className="container mt-4 mb-5">
@@ -174,6 +296,18 @@ export default function AdminDashboard() {
         <button className="btn btn-success" onClick={() => setView('kites')}>Kite Record</button>
         <button className="btn btn-warning" onClick={() => setView('addSchedule')}>Add Schedule</button>
         <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
+        <button className="btn btn-primary me-2" onClick={() => setView('aadhaar')}>
+          Aadhaar Card Details
+        </button>
+
+        <button className="btn btn-success me-2" onClick={() => setView('pension')}>
+          Pension Details
+        </button>
+
+        <button className="btn btn-warning" onClick={() => setView('voterid')}>
+          Voter ID Details
+        </button>
+
       </div>
 
       {view === 'complaints' && (
@@ -205,77 +339,77 @@ export default function AdminDashboard() {
                   <th>Department</th><th>Complaint</th><th>Remarks</th><th>Actions</th>
                 </tr>
               </thead>
-             <tbody>
-  {filteredComplaints.map((c, idx) => (
-    <tr key={idx} className={c.status === 'completed' ? 'table-success' : 'table-danger'}>
-      <td>{c.complaintId}</td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
-        ) : c.name}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
-        ) : c.phone}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
-        ) : c.address}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.department} onChange={e => setEditedComplaint({ ...editedComplaint, department: e.target.value })} />
-        ) : c.department}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
-        ) : c.details}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <input value={editedComplaint.remarks} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
-        ) : c.remarks}
-      </td>
-      <td>
-        {editingComplaintId === c._id ? (
-          <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
-            <FontAwesomeIcon icon={faSave} />
-          </button>
-        ) : (
-          <button className="btn btn-sm btn-warning me-1" onClick={() => handleEditClick(c)}>
-            <FontAwesomeIcon icon={faEdit} />
-          </button>
-        )}
-        <button className="btn btn-sm btn-danger me-1" onClick={() => deleteComplaint(c._id)}>
-          <FontAwesomeIcon icon={faTrash} />
-        </button>
-        <button className="btn btn-sm btn-info me-1" onClick={() => toggleStatus(c._id, c.status)}>
-          <FontAwesomeIcon icon={faSync} />
-        </button>
-        <button
-          className="btn btn-sm btn-dark"
-          onClick={() => {
-            const copyText = `complaintId: ${c.complaintId},\nname: ${c.name},\nphone: ${c.phone},\naddress: ${c.address},\ndepartment: ${c.department},\ndetails: ${c.details}`;
-            navigator.clipboard.writeText(copyText).then(() => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Copied!',
-                text: 'Complaint details copied to clipboard',
-                timer: 1500,
-                showConfirmButton: false
-              });
-            });
-          }}
-        >
-          <FontAwesomeIcon icon={faCopy} />
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
+              <tbody>
+                {filteredComplaints.map((c, idx) => (
+                  <tr key={idx} className={c.status === 'completed' ? 'table-success' : 'table-danger'}>
+                    <td>{c.complaintId}</td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
+                      ) : c.name}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
+                      ) : c.phone}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
+                      ) : c.address}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.department} onChange={e => setEditedComplaint({ ...editedComplaint, department: e.target.value })} />
+                      ) : c.department}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
+                      ) : c.details}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <input value={editedComplaint.remarks} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
+                      ) : c.remarks}
+                    </td>
+                    <td>
+                      {editingComplaintId === c._id ? (
+                        <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
+                          <FontAwesomeIcon icon={faSave} />
+                        </button>
+                      ) : (
+                        <button className="btn btn-sm btn-warning me-1" onClick={() => handleEditClick(c)}>
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                      )}
+                      <button className="btn btn-sm btn-danger me-1" onClick={() => deleteComplaint(c._id)}>
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                      <button className="btn btn-sm btn-info me-1" onClick={() => toggleStatus(c._id, c.status)}>
+                        <FontAwesomeIcon icon={faSync} />
+                      </button>
+                      <button
+                        className="btn btn-sm btn-dark"
+                        onClick={() => {
+                          const copyText = `complaintId: ${c.complaintId},\nname: ${c.name},\nphone: ${c.phone},\naddress: ${c.address},\ndepartment: ${c.department},\ndetails: ${c.details}`;
+                          navigator.clipboard.writeText(copyText).then(() => {
+                            Swal.fire({
+                              icon: 'success',
+                              title: 'Copied!',
+                              text: 'Complaint details copied to clipboard',
+                              timer: 1500,
+                              showConfirmButton: false
+                            });
+                          });
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faCopy} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
 
             </table>
           </div>
@@ -314,9 +448,9 @@ export default function AdminDashboard() {
                     <td>{k.name}</td>
                     <td>{k.quantity}</td>
                     <td>
-                      <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
+                      {/* <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
                         <FontAwesomeIcon icon={faTrash} />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
@@ -326,8 +460,316 @@ export default function AdminDashboard() {
         </>
       )}
 
+      {view === 'aadhaar' && (
+
+        <>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Aadhaar Card Records</h4>
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="Search by name, Aadhaar number or mobile..."
+              value={aadhaarSearch}
+              onChange={(e) => setAadhaarSearch(e.target.value)}
+            />
+
+
+            <div>
+              <button
+                className="btn btn-sm btn-outline-secondary me-2"
+                onClick={() =>
+                  exportTableExcel(
+                    ['Name', 'Aadhaar Number', 'Date of Birth', 'Mobile', 'Address'],
+                    aadhaarData.map(a => [
+                      a.fullName || '',
+                      a.aadhaarNumber || '',
+                      a.dob || '',
+                      a.mobile || '',
+                      a.address || ''
+                    ]),
+                    'aadhaar-data'
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faFileCsv} /> Excel
+              </button>
+
+              <button className="btn btn-sm btn-outline-danger" onClick={() =>
+                exportTablePDF('aadhaar-table', 'aadhaar-data')
+              }>
+                <FontAwesomeIcon icon={faFilePdf} /> PDF
+              </button>
+            </div>
+          </div>
+          <div className="table-responsive mt-3" id="aadhaar-table">
+            <table className="table table-bordered">
+              <thead className="table-dark">
+                <tr>
+                  <th>S.NO</th><th>NAME</th><th>ADDRESS</th><th>ADHAAR NUMBER</th><th>PHONE NO </th><th>DOB</th><th>ADDRESS CHANGE </th>
+                  <th>ACTION</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                {aadhaarData
+                  .filter((item) =>
+                    item.fullName.toLowerCase().includes(aadhaarSearch.toLowerCase()) ||
+                    item.aadhaarNumber.includes(aadhaarSearch) ||
+                    item.mobile.includes(aadhaarSearch)
+                  )
+                  .map((a, index) => (
+                    <tr key={a._id}>
+                      <td>{index + 1}</td>
+                      <td>{a.fullName}</td>
+                      <td>{a.address}</td>
+                      <td>{a.aadhaarNumber}</td>
+                      <td>{a.mobile}</td>
+                      <td>{a.dob}</td>
+                      <td>{a.addressChange}</td>
+                      <td>
+                        <button
+                          className="btn btn-warning btn-sm me-2"
+                          onClick={() => handleEditAadhaar(a)}
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDeleteAadhaar(a._id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+
+
+            </table>
+          </div>
+        </>
+      )}
+
+      {view === 'pension' && (
+        <>
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Pension Records</h4>
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Search by Name, Registration No., or Mobile"
+              value={pensionSearch}
+              onChange={(e) => setPensionSearch(e.target.value)}
+            />
+
+            <div>
+              <button
+                className="btn btn-sm btn-outline-secondary me-2"
+                onClick={() =>
+                  exportTableExcel(
+                    ['FULL NAME', 'REGISTRATION NO', 'PASSWORD', 'MOBILE', 'APPLICATION NO'],
+                    pensionData.map(p => [
+                      p.fullName || '',
+                      p.registrationNo || '',
+                      p.password || '',
+                      p.mobile || '',
+                      p.applicationNo || ''
+                    ]),
+                    'pension-data'
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faFileCsv} /> Excel
+              </button>
+
+              <button className="btn btn-sm btn-outline-danger" onClick={() =>
+                exportTablePDF('pension-table', 'pension-data')
+              }>
+                <FontAwesomeIcon icon={faFilePdf} /> PDF
+              </button>
+            </div>
+          </div>
+          <div className="table-responsive mt-3" id="pension-table">
+            <table className="table table-bordered">
+              <thead className="table-dark">
+                <tr>
+                  <th>FULL NAME </th><th>REGISTRATION NO </th><th>PASSWORD</th><th>MOBILE</th><th>APPLICATION NO </th><th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pensionData
+                  .filter((p) =>
+                    p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
+                    p.registrationNo.includes(pensionSearch) ||
+                    p.mobile.includes(pensionSearch)
+                  )
+                  .map((p, index) => (
+                    <tr key={p._id}>
+                      <td>{p.fullName}</td>
+                      <td>{p.registrationNo}</td>
+                      <td>{p.password}</td>
+                      <td>{p.mobile}</td>
+                      <td>{p.applicationNo}</td>
+                      <td>
+                        <button className="btn btn-sm btn-warning" onClick={() => handleEditPension(p)}>
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+
+
+            </table>
+          </div>
+        </>
+      )}
+
+      {view === 'voterid' && (
+        <>
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Voter ID Records</h4>
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Search by Name, Mobile or Voter Card No."
+              value={voterSearch}
+              onChange={(e) => setVoterSearch(e.target.value)}
+            />
+
+            <div>
+              <button
+                className="btn btn-sm btn-outline-success me-2"
+                onClick={() =>
+                  exportTableExcel(
+                    ['FULL NAME ', 'MOBILE', 'APPLICATION NO ', 'VOTER CARD NO'],
+                    voterIdData.map(v => [
+                      v.fullName || '',
+                      v.mobile || '',
+                      v.applicationNo || '',
+                      v.voterCardNo || ''
+                    ]),
+                    'voter-id-data'
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faFileCsv} /> Export Excel
+              </button>
+
+              <button className="btn btn-sm btn-outline-danger" onClick={() =>
+                exportTablePDF('voterid-table', 'voterid-data')
+              }>
+                <FontAwesomeIcon icon={faFilePdf} /> PDF
+              </button>
+            </div>
+          </div>
+          <div className="table-responsive mt-3" id="voterid-table">
+            <table className="table table-bordered">
+              <thead className="table-dark">
+                <tr>
+                  <th>FULL NAME </th><th>MOBILE</th><th>APPLICATION NO</th><th>VOTER CARD NO</th><th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {voterIdData
+                  .filter((v) =>
+                    v.fullName.toLowerCase().includes(voterSearch.toLowerCase()) ||
+                    v.voterCardNo.includes(voterSearch) ||
+                    v.mobile.includes(voterSearch)
+                  )
+                  .map((v, index) => (
+                    <tr key={v._id}>
+                      <td>{v.fullName}</td>
+                      <td>{v.mobile}</td>
+                      <td>{v.applicationNo}</td>
+                      <td>{v.voterCardNo}</td>
+                      <td>
+                        <button className="btn btn-sm btn-warning" onClick={() => handleEditVoter(v)}>
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+
+
+            </table>
+          </div>
+        </>
+      )}
+
       {view === 'addSchedule' && <AddScheduleForm />}
       {view === 'viewSchedules' && <ViewSchedules />}
+
+      {showEditModal && (
+        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit Aadhaar Details</h5>
+                <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <input
+                  className="form-control mb-2"
+                  name="fullName"
+                  value={editedAadhaarData.fullName || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Full Name"
+                />
+                <input
+                  className="form-control mb-2"
+                  name="address"
+                  value={editedAadhaarData.address || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Address"
+                />
+                <input
+                  className="form-control mb-2"
+                  name="aadhaarNumber"
+                  value={editedAadhaarData.aadhaarNumber || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Aadhaar Number"
+                />
+                <input
+                  className="form-control mb-2"
+                  name="mobile"
+                  value={editedAadhaarData.mobile || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Mobile"
+                />
+                <input
+                  className="form-control mb-2"
+                  name="dob"
+                  value={editedAadhaarData.dob || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Date of Birth"
+                />
+                <input
+                  className="form-control mb-2"
+                  name="addressChange"
+                  value={editedAadhaarData.addressChange || ''}
+                  onChange={handleEditInputChange}
+                  placeholder="Address Change Request"
+                />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={handleSaveEditedAadhaar}>
+                  Save Changes
+                </button>
+                <button className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
   );
 }

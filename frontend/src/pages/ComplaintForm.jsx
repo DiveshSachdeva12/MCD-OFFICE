@@ -1,10 +1,22 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { FaUser, FaPhoneAlt, FaHome, FaAlignLeft, FaHashtag, FaBuilding } from 'react-icons/fa';
+import {
+  FaUser,
+  FaPhoneAlt,
+  FaHome,
+  FaAlignLeft,
+  FaHashtag,
+  FaBuilding
+} from 'react-icons/fa';
 import { BASE_URL } from '../api/baseUrl';
+import AadhaarForm from '../components/AadhaarForm';
+import PensionForm from '../components/PensionForm';
+import VoterIdForm from '../components/VoterIdForm';
 
 const ComplaintForm = () => {
+  const isAuthorized = true;
+
   const [form, setForm] = useState({
     complaintId: 'C' + Date.now(),
     name: '',
@@ -14,11 +26,56 @@ const ComplaintForm = () => {
     details: ''
   });
 
-  const handleChange = (e) => {
+  const [selectedForm, setSelectedForm] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleChange = async (e) => {
     const { name, value } = e.target;
-    if (["name", "address", "details"].includes(name)) {
+
+    if (name === 'department') {
+      if (
+        ['AADHAAR CARD ISSUE', 'PENSION FORM', 'VOTER ID CARD ISSUE'].includes(value) &&
+        isAuthorized
+      ) {
+        const { isConfirmed, value: password } = await Swal.fire({
+          title: 'Enter Password',
+          input: 'password',
+          inputPlaceholder: 'Enter access password',
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+        });
+
+        if (isConfirmed) {
+          if (password === '13277') {
+            const formType = value.toLowerCase().includes('aadhaar')
+              ? 'aadhaar'
+              : value.toLowerCase().includes('pension')
+              ? 'pension'
+              : 'voter';
+
+            setSelectedForm(formType);
+            setShowModal(true);
+          } else {
+            Swal.fire('Access Denied', 'Incorrect password.', 'error');
+            setSelectedForm(null);
+            setShowModal(false);
+          }
+        } else {
+          setSelectedForm(null);
+          setShowModal(false);
+        }
+
+        setForm({ ...form, [name]: value });
+        return;
+      }
+
+      setSelectedForm(null);
+      setShowModal(false);
+    }
+
+    if (['name', 'address', 'details'].includes(name)) {
       setForm({ ...form, [name]: value.toUpperCase() });
-    } else if (name === "phone" && /^\d{0,10}$/.test(value)) {
+    } else if (name === 'phone' && /^\d{0,10}$/.test(value)) {
       setForm({ ...form, [name]: value });
     } else {
       setForm({ ...form, [name]: value });
@@ -29,12 +86,7 @@ const ComplaintForm = () => {
     e.preventDefault();
     try {
       await axios.post(`${BASE_URL}/api/complaints`, form);
-      Swal.fire({
-        title: "Success!",
-        text: "Your complaint has been submitted successfully.",
-        icon: "success",
-        confirmButtonText: "OK"
-      });
+      Swal.fire('Success', 'Complaint submitted successfully!', 'success');
       setForm({
         complaintId: 'C' + Date.now(),
         name: '',
@@ -43,113 +95,113 @@ const ComplaintForm = () => {
         department: '',
         details: ''
       });
+      setSelectedForm(null);
+      setShowModal(false);
     } catch {
-      Swal.fire({
-        title: "त्रुटि!",
-        text: "शिकायत सबमिट करने में समस्या आई। कृपया पुनः प्रयास करें।",
-        icon: "warning",
-        confirmButtonText: "ठीक है"
-      });
+      Swal.fire('Error', 'Failed to submit complaint', 'error');
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedForm(null);
   };
 
   return (
     <div className="container my-5">
-      <div className="card shadow-lg border-0 rounded-4" style={{ fontFamily: 'Segoe UI, sans-serif' }}>
-        <div className="card-header text-white text-center py-4"
-             style={{ background: '#0b5394', borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}>
-              
-          <h4 className="fw-bold">📄 शिकायत फॉर्म / COMPLAINT FORM</h4>
-          <div className="alert alert-warning mt-3" role="alert" style={{ fontSize: '1.05rem', borderRadius: '0.5rem' }}>
-  <strong>⚠ कृपया ध्यान दें:</strong> अपनी <strong>शिकायत आईडी (Complaint ID)</strong> को सुरक्षित रखें।  
-  भविष्य में सभी कार्यवाही इसी के आधार पर की जाएगी।<br />
-  <strong>⚠ Note:</strong> Please keep your <strong>Complaint ID</strong> safe.  
-  All future actions will be taken based on this ID.
-</div>
-
-          
+      <div className="card shadow-lg border-0 rounded-4">
+        <div className="card-header text-white text-center py-4" style={{ background: '#0b5394' }}>
+          <h4>📄 Complaint Form</h4>
+          <div className="alert alert-warning text-center rounded-3 fs-6 mb-4">
+            ⚠️ <strong>Important:</strong> Please fill your details carefully and clearly. Incorrect or incomplete info may lead to rejection.<br />
+            ⚠️ Your Complaint ID: <strong>{form.complaintId}</strong>
+          </div>
         </div>
-        
-        <div className="card-body px-4 px-md-5 py-4 bg-light">
+
+        <div className="card-body px-4 py-4 bg-light">
           <form onSubmit={handleSubmit}>
             <div className="row g-4">
               <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  <FaHashtag className="me-2 text-secondary" /> Complaint ID
-                </label>
-                <input type="text" name="complaintId" className="form-control bg-white"
-                       value={form.complaintId} disabled />
+                <label className="form-label"><FaHashtag /> Complaint ID</label>
+                <input type="text" className="form-control" value={form.complaintId} disabled />
               </div>
 
               <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  <FaUser className="me-2 text-secondary" /> Full Name
-                </label>
-                <input type="text" name="name" className="form-control" placeholder="अपना पूरा नाम"
-                       value={form.name} onChange={handleChange} required
-                       pattern="[A-Z\s]{3,}" title="कम से कम 3 अक्षर और केवल अक्षर उपयोग करें" />
+                <label className="form-label"><FaUser /> Full Name</label>
+                <input type="text" name="name" className="form-control" placeholder="Enter full name" value={form.name} onChange={handleChange} required />
               </div>
 
               <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  <FaPhoneAlt className="me-2 text-secondary" /> Phone Number
-                </label>
-                <input type="text" name="phone" className="form-control"
-                       placeholder="10 अंकों का मोबाइल नंबर"
-                       value={form.phone} onChange={handleChange}
-                       inputMode="numeric" pattern="\d{10}" maxLength="10"
-                       title="10 अंकों का मोबाइल नंबर दर्ज करें" required />
+                <label className="form-label"><FaPhoneAlt /> Mobile Number</label>
+                <input type="text" name="phone" className="form-control" placeholder="10-digit mobile number" maxLength={10} value={form.phone} onChange={handleChange} required />
               </div>
 
               <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  <FaHome className="me-2 text-secondary" /> Address
-                </label>
-                <input type="text" name="address" className="form-control"
-                       placeholder="अपना पता लिखें"
-                       value={form.address} onChange={handleChange}
-                       required minLength={10} />
+                <label className="form-label"><FaHome /> Address</label>
+                <input type="text" name="address" className="form-control" placeholder="Enter address" value={form.address} onChange={handleChange} required />
               </div>
 
               <div className="col-md-6">
-                <label className="form-label fw-semibold">
-                  <FaBuilding className="me-2 text-secondary" /> Complaint Department
-                </label>
-                <select name="department" className="form-select"
-                        value={form.department} onChange={handleChange} required>
-                  <option value="">-- विभाग चुनें / Select Department --</option>
+                <label className="form-label"><FaBuilding /> Department</label>
+                <select name="department" className="form-select" value={form.department} onChange={handleChange} required>
+                  <option value="">-- Select Department --</option>
                   <option value="AADHAAR CARD ISSUE">AADHAAR CARD ISSUE</option>
-                  <option value="PAN CARD ISSUE">PAN CARD ISSUE</option>
+                  <option value="PENSION FORM">PENSION FORM</option>
+                  <option value="VOTER ID CARD ISSUE">VOTER ID CARD ISSUE</option>
                   <option value="SEWER PROBLEM">SEWER PROBLEM</option>
                   <option value="WATER SUPPLY ISSUE">WATER SUPPLY ISSUE</option>
                   <option value="STREET LIGHT NOT WORKING">STREET LIGHT NOT WORKING</option>
                   <option value="ROAD OR DRAIN DAMAGE">ROAD OR DRAIN DAMAGE</option>
                   <option value="GARBAGE COLLECTION">GARBAGE COLLECTION</option>
-                  <option value="PROPERTY TAX RELATED">PROPERTY TAX RELATED</option>
+                  <option value="MCD">MCD</option>
+                  <option value="DJB">DJB</option>
+                  <option value="BSES">BSES</option>
+                  <option value="DUSIB-SLUM">DUSIB-SLUM</option>
+                  <option value="PWD">PWD</option>
+                  <option value="DSIIDC">DSIIDC</option>
+                  <option value="HOSPITAL">HOSPITAL</option>
+                  <option value="SCHOOL">SCHOOL</option>
+                  <option value="LIBRARY">LIBRARY</option>
                   <option value="OTHER">OTHER</option>
                 </select>
               </div>
 
               <div className="col-12">
-                <label className="form-label fw-semibold">
-                  <FaAlignLeft className="me-2 text-secondary" /> Complaint Details
-                </label>
-                <textarea name="details" className="form-control"
-                          placeholder="शिकायत का विवरण दें"
-                          value={form.details} onChange={handleChange}
-                          rows="5" required minLength={10}></textarea>
+                <label className="form-label"><FaAlignLeft /> Complaint Details</label>
+                <textarea name="details" className="form-control" rows="4" placeholder="Write your complaint here..." value={form.details} onChange={handleChange} required></textarea>
               </div>
 
-              <div className="col-12 mt-4">
-                <button type="submit"
-                        className="btn btn-primary btn-lg w-100 fw-semibold">
-                  📝 SUBMIT COMPLAINT / शिकायत दर्ज करें
+              <div className="col-12 mt-3">
+                <button type="submit" className="btn btn-primary w-100">
+                  📝 Submit Complaint
                 </button>
               </div>
             </div>
           </form>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-primary text-white">
+                <h5 className="modal-title">
+                  {selectedForm === 'aadhaar' && 'Aadhaar Form'}
+                  {selectedForm === 'pension' && 'Pension Form'}
+                  {selectedForm === 'voter' && 'Voter ID Form'}
+                </h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                {selectedForm === 'aadhaar' && <AadhaarForm />}
+                {selectedForm === 'pension' && <PensionForm />}
+                {selectedForm === 'voter' && <VoterIdForm />}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
