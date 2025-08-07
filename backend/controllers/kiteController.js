@@ -1,8 +1,7 @@
-// backend/controllers/kiteController.js
 const KiteModel = require('../models/kiteModel');
 
 const registerKite = async (req, res) => {
-  const { aadhaar, name, quantity } = req.body;
+  const { aadhaar, name, phone, quantity } = req.body;
 
   try {
     const existing = await KiteModel.findOne({ aadhaar });
@@ -15,13 +14,13 @@ const registerKite = async (req, res) => {
       return res.status(400).json({ message: 'Maximum 10 kites allowed per Aadhaar.' });
     }
 
-    const newKite = new KiteModel({ aadhaar, name, quantity });
+    const newKite = new KiteModel({ aadhaar, name, phone, quantity });
     await newKite.save();
 
     res.status(200).json({ message: 'Kites distributed successfully!' });
 
   } catch (error) {
-    console.error(error);
+    console.error('Error in registerKite:', error);
     res.status(500).json({ message: 'Server error while distributing kites.' });
   }
 };
@@ -31,7 +30,7 @@ const getAllKites = async (req, res) => {
     const allKites = await KiteModel.find();
     res.status(200).json(allKites);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching kites:', error);
     res.status(500).json({ message: 'Failed to fetch kite data.' });
   }
 };
@@ -42,7 +41,7 @@ const deleteKite = async (req, res) => {
     await KiteModel.findByIdAndDelete(id);
     res.status(200).json({ message: 'Kite record deleted successfully.' });
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting kite:', error);
     res.status(500).json({ message: 'Failed to delete kite record.' });
   }
 };

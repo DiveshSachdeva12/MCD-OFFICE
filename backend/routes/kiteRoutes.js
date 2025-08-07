@@ -1,6 +1,6 @@
-// backend/routes/kiteRoutes.js
 const express = require('express');
 const router = express.Router();
+
 const {
   registerKite,
   getAllKites,
@@ -9,6 +9,6 @@ const {
 
 router.post('/', registerKite);
 router.get('/', getAllKites);
-router.delete('/:id', deleteKite); // Make sure this line exists
+router.delete('/:id', deleteKite);
 
 module.exports = router;

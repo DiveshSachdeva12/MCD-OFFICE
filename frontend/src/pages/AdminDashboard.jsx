@@ -161,15 +161,23 @@ export default function AdminDashboard() {
   };
 
   const exportKitesToCSV = () => {
-    const headers = ['Aadhaar', 'Name', 'Number of Kites'];
-    const rows = kites.map(k => [k.aadhaar, k.name, k.quantity]);
-    const csv = headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'kite-distribution.csv';
-    link.click();
-  };
+  const headers = ['Aadhaar', 'Name', 'Phone Number', 'Number of Kites', 'Date'];
+  const rows = kites.map(k => [
+    k.aadhaar,
+    k.name,
+    k.phone || '',       // Add phone field
+    k.quantity,
+    k.date || ''         // Add date field
+  ]);
+
+  const csv = headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'kite-distribution.csv';
+  link.click();
+};
+
 
   const exportKitesToPDF = () => {
     const input = document.getElementById('kite-table');
@@ -383,9 +391,9 @@ export default function AdminDashboard() {
                           <FontAwesomeIcon icon={faEdit} />
                         </button>
                       )}
-                      <button className="btn btn-sm btn-danger me-1" onClick={() => deleteComplaint(c._id)}>
+                      {/* <button className="btn btn-sm btn-danger me-1" onClick={() => deleteComplaint(c._id)}>
                         <FontAwesomeIcon icon={faTrash} />
-                      </button>
+                      </button> */}
                       <button className="btn btn-sm btn-info me-1" onClick={() => toggleStatus(c._id, c.status)}>
                         <FontAwesomeIcon icon={faSync} />
                       </button>
@@ -416,49 +424,67 @@ export default function AdminDashboard() {
         </>
       )}
 
-      {view === 'kitePanel' && <KiteForm />}
+     {view === 'kitePanel' && <KiteForm />}
 
-      {view === 'kites' && (
-        <>
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Kite Distribution Records</h4>
-            <div>
-              <button className="btn btn-sm btn-outline-secondary me-2" onClick={exportKitesToCSV}>
-                <FontAwesomeIcon icon={faFileCsv} /> CSV
-              </button>
-              <button className="btn btn-sm btn-outline-danger" onClick={exportKitesToPDF}>
-                <FontAwesomeIcon icon={faFilePdf} /> PDF
-              </button>
-            </div>
-          </div>
-          <div className="table-responsive mt-3" id="kite-table">
-            <table className="table table-bordered">
-              <thead className="table-dark">
-                <tr>
-                  <th>Aadhaar</th>
-                  <th>Name</th>
-                  <th>Number of Kites</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {kites.map((k, index) => (
-                  <tr key={index}>
-                    <td>{k.aadhaar}</td>
-                    <td>{k.name}</td>
-                    <td>{k.quantity}</td>
-                    <td>
-                      {/* <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button> */}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+{view === 'kites' && (
+  <>
+    <div className="d-flex justify-content-between align-items-center">
+      <h4>Kite Distribution Records</h4>
+      <div>
+        <button className="btn btn-sm btn-outline-secondary me-2" onClick={exportKitesToCSV}>
+          <FontAwesomeIcon icon={faFileCsv} /> CSV
+        </button>
+        <button className="btn btn-sm btn-outline-danger" onClick={exportKitesToPDF}>
+          <FontAwesomeIcon icon={faFilePdf} /> PDF
+        </button>
+      </div>
+    </div>
+    <div className="table-responsive mt-3" id="kite-table">
+      <table className="table table-bordered">
+        <thead className="table-dark">
+          <tr>
+            <th>S.No</th> {/* ✅ NEW */}
+            <th>Aadhaar</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Number of Kites</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {kites.map((k, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td> {/* ✅ NEW */}
+              <td>{k.aadhaar}</td>
+              <td>{k.name}</td>
+              <td>{k.phone || 'N/A'}</td>
+              <td>{k.quantity}</td>
+              <td>
+                {k.date
+                  ? new Date(k.date).toLocaleString('en-IN', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: true
+                    })
+                  : 'N/A'}
+              </td>
+              <td>
+                {/* <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button> */}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </>
+)}
 
       {view === 'aadhaar' && (
 
@@ -536,12 +562,12 @@ export default function AdminDashboard() {
                         </button>
 
 
-                        <button
+                        {/* <button
                           className="btn btn-sm btn-danger"
                           onClick={() => handleDeleteAadhaar(a._id)}
                         >
                           Delete
-                        </button>
+                        </button> */}
                       </td>
                     </tr>
                   ))}

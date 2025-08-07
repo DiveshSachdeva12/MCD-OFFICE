@@ -2,28 +2,34 @@ import { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
+
 const KiteForm = () => {
   const [form, setForm] = useState({
     aadhaar: '',
     name: '',
-    quantity: ''
+    quantity: '',
+    phone: ''
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "aadhaar") {
+    if (name === 'aadhaar') {
       if (/^\d{0,12}$/.test(value)) {
         setForm({ ...form, [name]: value });
       }
-    } else if (name === "name") {
+    } else if (name === 'name') {
       setForm({ ...form, [name]: value.toUpperCase() });
-    } else if (name === "quantity") {
+    } else if (name === 'quantity') {
       const num = parseInt(value);
       if (!isNaN(num) && num >= 1 && num <= 10) {
         setForm({ ...form, [name]: value });
-      } else if (value === "") {
-        setForm({ ...form, [name]: "" });
+      } else if (value === '') {
+        setForm({ ...form, [name]: '' });
+      }
+    } else if (name === 'phone') {
+      if (/^\d{0,10}$/.test(value)) {
+        setForm({ ...form, [name]: value });
       }
     }
   };
@@ -32,7 +38,7 @@ const KiteForm = () => {
     e.preventDefault();
 
     try {
-     const res = await axios.post(`${BASE_URL}/api/kites`, form);
+      const res = await axios.post(`${BASE_URL}/api/kites`, form);
 
       Swal.fire({
         icon: 'success',
@@ -41,7 +47,7 @@ const KiteForm = () => {
         confirmButtonColor: '#198754'
       });
 
-      setForm({ aadhaar: '', name: '', quantity: '' });
+      setForm({ aadhaar: '', name: '', quantity: '', phone: '' });
 
     } catch (err) {
       if (err.response && err.response.status === 400) {
@@ -66,15 +72,20 @@ const KiteForm = () => {
     <div className="container my-5">
       <div className="card shadow-lg border-success rounded-4">
         <div className="card-header bg-success text-white text-center rounded-top-4">
-          <h4 className="mb-0"><i className="bi bi-send-check-fill me-2"></i>Kite Distribution Form</h4>
+          <h4 className="mb-0">
+            <i className="bi bi-send-check-fill me-2"></i>Kite Distribution Form
+          </h4>
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
+            
             {/* Aadhaar */}
             <div className="mb-3">
               <label className="form-label fw-bold">Aadhaar Number</label>
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-credit-card-2-front"></i></span>
+                <span className="input-group-text">
+                  <i className="bi bi-credit-card-2-front"></i>
+                </span>
                 <input
                   type="text"
                   name="aadhaar"
@@ -93,7 +104,9 @@ const KiteForm = () => {
             <div className="mb-3">
               <label className="form-label fw-bold">Name</label>
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-person-bounding-box"></i></span>
+                <span className="input-group-text">
+                  <i className="bi bi-person-bounding-box"></i>
+                </span>
                 <input
                   type="text"
                   name="name"
@@ -108,11 +121,34 @@ const KiteForm = () => {
               </div>
             </div>
 
+            {/* Phone */}
+            <div className="mb-3">
+              <label className="form-label fw-bold">Phone Number</label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <i className="bi bi-telephone-fill"></i>
+                </span>
+                <input
+                  type="text"
+                  name="phone"
+                  className="form-control"
+                  placeholder="Enter 10-digit phone number"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                  pattern="\d{10}"
+                  title="Phone number must be 10 digits"
+                />
+              </div>
+            </div>
+
             {/* Quantity */}
             <div className="mb-3">
               <label className="form-label fw-bold">Number of Kites</label>
               <div className="input-group">
-                <span className="input-group-text"><i className="bi bi-box-seam"></i></span>
+                <span className="input-group-text">
+                  <i className="bi bi-box-seam"></i>
+                </span>
                 <input
                   type="number"
                   name="quantity"
@@ -130,12 +166,13 @@ const KiteForm = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <div className="d-grid">
               <button type="submit" className="btn btn-success btn-lg fw-semibold rounded-pill">
                 <i className="bi bi-check2-circle me-2"></i>Submit Request
               </button>
             </div>
+
           </form>
         </div>
       </div>
