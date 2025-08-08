@@ -7,8 +7,7 @@ const KiteForm = () => {
   const [form, setForm] = useState({
     aadhaar: '',
     name: '',
-    quantity: '',
-    phone: ''
+    quantity: ''
   });
 
   const handleChange = (e) => {
@@ -18,18 +17,16 @@ const KiteForm = () => {
       if (/^\d{0,12}$/.test(value)) {
         setForm({ ...form, [name]: value });
       }
-    } else if (name === 'name') {
+    } 
+    else if (name === 'name') {
       setForm({ ...form, [name]: value.toUpperCase() });
-    } else if (name === 'quantity') {
+    } 
+    else if (name === 'quantity') {
       const num = parseInt(value);
-      if (!isNaN(num) && num >= 1 && num <= 10) {
+      if (!isNaN(num) && num >= 1 && num <= 12) {
         setForm({ ...form, [name]: value });
       } else if (value === '') {
         setForm({ ...form, [name]: '' });
-      }
-    } else if (name === 'phone') {
-      if (/^\d{0,10}$/.test(value)) {
-        setForm({ ...form, [name]: value });
       }
     }
   };
@@ -47,7 +44,7 @@ const KiteForm = () => {
         confirmButtonColor: '#198754'
       });
 
-      setForm({ aadhaar: '', name: '', quantity: '', phone: '' });
+      setForm({ aadhaar: '', name: '', quantity: '' });
 
     } catch (err) {
       if (err.response && err.response.status === 400) {
@@ -121,27 +118,6 @@ const KiteForm = () => {
               </div>
             </div>
 
-            {/* Phone */}
-            <div className="mb-3">
-              <label className="form-label fw-bold">Phone Number</label>
-              <div className="input-group">
-                <span className="input-group-text">
-                  <i className="bi bi-telephone-fill"></i>
-                </span>
-                <input
-                  type="text"
-                  name="phone"
-                  className="form-control"
-                  placeholder="Enter 10-digit phone number"
-                  value={form.phone}
-                  onChange={handleChange}
-                  required
-                  pattern="\d{10}"
-                  title="Phone number must be 10 digits"
-                />
-              </div>
-            </div>
-
             {/* Quantity */}
             <div className="mb-3">
               <label className="form-label fw-bold">Number of Kites</label>
@@ -153,16 +129,16 @@ const KiteForm = () => {
                   type="number"
                   name="quantity"
                   className="form-control"
-                  placeholder="Enter number of kites (max 10)"
+                  placeholder="Enter number of kites (max 12)"
                   value={form.quantity}
                   onChange={handleChange}
                   required
                   min={1}
-                  max={10}
+                  max={12}
                 />
               </div>
               <div className="form-text text-muted">
-                Maximum allowed per Aadhaar is 10 kites.
+                Maximum allowed per Aadhaar is 12 kites.
               </div>
             </div>
 

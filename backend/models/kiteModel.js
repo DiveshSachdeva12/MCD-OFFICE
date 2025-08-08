@@ -5,20 +5,18 @@ const KiteModelSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    length: 12
+    minlength: 12,
+    maxlength: 12
   },
   name: {
     type: String,
     required: true
   },
-  phone: {
-    type: String,
-    required: false
-  },
   quantity: {
     type: Number,
     required: true,
-    min: 1
+    min: 1,
+    max: 12
   },
   date: {
     type: Date,

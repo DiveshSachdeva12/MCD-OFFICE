@@ -441,46 +441,45 @@ export default function AdminDashboard() {
     </div>
     <div className="table-responsive mt-3" id="kite-table">
       <table className="table table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>S.No</th> {/* ✅ NEW */}
-            <th>Aadhaar</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Number of Kites</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {kites.map((k, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td> {/* ✅ NEW */}
-              <td>{k.aadhaar}</td>
-              <td>{k.name}</td>
-              <td>{k.phone || 'N/A'}</td>
-              <td>{k.quantity}</td>
-              <td>
-                {k.date
-                  ? new Date(k.date).toLocaleString('en-IN', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                      hour12: true
-                    })
-                  : 'N/A'}
-              </td>
-              <td>
-                {/* <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
+       <thead className="table-dark">
+  <tr>
+    <th>S.No</th>
+    <th>Aadhaar</th>
+    <th>Name</th>
+    <th>Number of Kites</th>
+    <th>Date</th>
+  </tr>
+</thead>
+<tbody>
+  {kites.map((k, index) => (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{k.aadhaar}</td>
+      <td>{k.name}</td>
+      <td>{k.quantity}</td>
+      <td>
+        {k.date
+          ? new Date(k.date).toLocaleString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true
+            })
+          : 'N/A'}
+      </td>
+       {/* <td>
+                <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
                   <FontAwesomeIcon icon={faTrash} />
-                </button> */}
-              </td>
-            </tr>
-          ))}
-        </tbody>
+                </button>
+              </td> */}
+    </tr>
+  ))}
+</tbody>
+ 
+
       </table>
     </div>
   </>
