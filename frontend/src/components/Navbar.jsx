@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './Navbar.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import {
+  FaHome,
+  FaInfoCircle,
+  FaRegListAlt,
+  FaImages,
+  FaUserShield,
+} from "react-icons/fa";
+import "./Navbar.css";
 
 export default function Navbar() {
   const [time, setTime] = useState(new Date());
@@ -11,14 +18,13 @@ export default function Navbar() {
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
   const handleNavItemClick = () => {
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    if (navbarToggler && navbarCollapse.classList.contains('show')) {
+    const navbarToggler = document.querySelector(".navbar-toggler");
+    const navbarCollapse = document.querySelector(".navbar-collapse");
+    if (navbarToggler && navbarCollapse.classList.contains("show")) {
       navbarToggler.click();
     }
   };
@@ -27,12 +33,12 @@ export default function Navbar() {
     <>
       {/* ===== Top Header ===== */}
       <div className="top-header d-flex justify-content-between align-items-center px-3 py-1 bg-white border-bottom small-text">
-        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: '14px' }}>
+        <div style={{ fontFamily: "'Oswald', sans-serif", fontSize: "14px" }}>
           दिल्ली नगर निगम | MUNICIPAL CORPORATION OF DELHI
         </div>
         {/* Timer */}
-        <div style={{ fontSize: '13px', fontWeight: 'bold' }}>
-          {time.toLocaleTimeString('en-IN', { hour12: true })}
+        <div style={{ fontSize: "13px", fontWeight: "bold" }}>
+          {time.toLocaleTimeString("en-IN", { hour12: true })}
         </div>
       </div>
 
@@ -42,32 +48,50 @@ export default function Navbar() {
           {/* Logo + Titles */}
           <div className="col-12 col-md-9 d-md-flex align-items-center">
             <div className="text-center text-md-start mb-2 mb-md-0 me-md-3">
-              <img src="/mcd.jpg" alt="MCD Logo" style={{ height: '100px' }} />
+              <img src="/mcd.jpg" alt="MCD Logo" style={{ height: "100px" }} />
             </div>
 
             <div className="text-center text-md-start w-100">
               {/* Desktop View */}
               <div className="d-none d-md-block">
-                <h6 className="mb-1 fw-bold text-uppercase fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-1 fw-bold text-uppercase fs-4"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   MCD – MUNICIPAL CORPORATION OF DELHI
                 </h6>
-                <h6 className="mb-1 fw-bold text-uppercase fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-1 fw-bold text-uppercase fs-4"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   पंकज लुथरा
                 </h6>
-                <h6 className="mb-0 fw-bold text-uppercase fs-4" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-0 fw-bold text-uppercase fs-4"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   निगम पार्षद पंकज लूथरा झिलमिल वार्ड 216
                 </h6>
               </div>
 
               {/* Mobile View */}
               <div className="d-md-none">
-                <h6 className="mb-1 fw-bold text-uppercase fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-1 fw-bold text-uppercase fs-6 text-center"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   MCD – MUNICIPAL CORPORATION OF DELHI
                 </h6>
-                <h6 className="mb-1 fw-bold text-uppercase fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-1 fw-bold text-uppercase fs-6 text-center"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   पंकज लुथरा
                 </h6>
-                <h6 className="mb-0 fw-bold text-uppercase fs-6 text-center" style={{ fontFamily: "'Oswald', sans-serif" }}>
+                <h6
+                  className="mb-0 fw-bold text-uppercase fs-6 text-center"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
                   निगम पार्षद पंकज लूथरा झिलमिल वार्ड 216
                 </h6>
               </div>
@@ -77,10 +101,23 @@ export default function Navbar() {
           {/* Flag + Helpline */}
           <div className="col-12 col-md-3 text-center text-md-end mt-2 mt-md-0 d-none d-md-block">
             <div className="d-flex flex-column align-items-center align-items-md-end">
-              <img src="/flag.jpg" alt="India Flag" style={{ height: '45px', marginBottom: '5px' }} />
-              <span className="text-muted fw-semibold" style={{ fontSize: '13px' }}>HELPLINE:</span>
-              <span className="fw-bold text-primary" style={{ fontSize: '14px' }}>8700115912</span>
-              <span className="fw-bold text-primary" style={{ fontSize: '14px' }}>9311981939</span>
+              <img
+                src="/flag.jpg"
+                alt="India Flag"
+                style={{ height: "45px", marginBottom: "5px" }}
+              />
+              <span
+                className="text-muted fw-semibold"
+                style={{ fontSize: "13px" }}
+              >
+                HELPLINE:
+              </span>
+              <span className="fw-bold text-primary" style={{ fontSize: "14px" }}>
+                8700115912
+              </span>
+              <span className="fw-bold text-primary" style={{ fontSize: "14px" }}>
+                9311981939
+              </span>
             </div>
           </div>
         </div>
@@ -89,7 +126,11 @@ export default function Navbar() {
       {/* ===== Navbar ===== */}
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-2 py-2 shadow-sm">
         <div className="container-fluid">
-          <Link className="navbar-brand fw-bold text-white text-uppercase" to="/" onClick={handleNavItemClick}>
+          <Link
+            className="navbar-brand fw-bold text-white text-uppercase"
+            to="/"
+            onClick={handleNavItemClick}
+          >
             MCD PORTAL
           </Link>
 
@@ -110,35 +151,73 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-3">
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/" onClick={handleNavItemClick}>
-                  Home
+                <Link
+                  className="nav-link text-white fw-bold text-uppercase d-flex align-items-center"
+                  to="/"
+                  onClick={handleNavItemClick}
+                >
+                  <FaHome className="me-1" /> Home
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/about" onClick={handleNavItemClick}>
-                  About Us
+                <Link
+                  className="nav-link text-white fw-bold text-uppercase d-flex align-items-center"
+                  to="/about"
+                  onClick={handleNavItemClick}
+                >
+                  <FaInfoCircle className="me-1" /> About Us
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/complaint" onClick={handleNavItemClick}>
-                  Complaint Form
+                <Link
+                  className="nav-link text-white fw-bold text-uppercase d-flex align-items-center"
+                  to="/complaint"
+                  onClick={handleNavItemClick}
+                >
+                  <FaRegListAlt className="me-1" /> Complaint Form
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link text-white fw-bold text-uppercase" to="/gallery" onClick={handleNavItemClick}>
-                  Gallery
+                <Link
+                  className="nav-link text-white fw-bold text-uppercase d-flex align-items-center"
+                  to="/gallery"
+                  onClick={handleNavItemClick}
+                >
+                  <FaImages className="me-1" /> Gallery
                 </Link>
               </li>
             </ul>
 
-            {/* Admin Button */}
+            {/* ===== Admin Department Badge ===== */}
             <div className="d-flex gap-2 mt-2 mt-lg-0">
               <Link
                 to="/admin-login"
-                className="btn btn-danger btn-sm text-uppercase fw-bold"
                 onClick={handleNavItemClick}
+                className="text-decoration-none"
               >
-                Admin Department
+                <div
+                  className="d-flex align-items-center px-3 py-2 shadow-sm"
+                  style={{
+                    background: "linear-gradient(135deg, #b71c1c, #880e4f)",
+                    borderRadius: "50px",
+                    color: "#fff",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    letterSpacing: "0.5px",
+                    transition: "0.3s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.transform = "scale(1.05)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
+                >
+                  <FaUserShield size={20} className="me-2" />
+                  <span style={{ textTransform: "uppercase" }}>
+                    Admin Department
+                  </span>
+                </div>
               </Link>
             </div>
           </div>
