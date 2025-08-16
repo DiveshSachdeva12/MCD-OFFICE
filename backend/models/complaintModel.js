@@ -1,5 +1,3 @@
-// backend/models/complaintModel.js
-
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
@@ -14,8 +12,8 @@ const complaintSchema = new mongoose.Schema({
     enum: ['pending', 'completed'],
     default: 'pending',
   },
-  remarks: { type: String }, // ✅ ADDED HERE CORRECTLY
-  createdAt: { type: Date, default: Date.now },
+  remarks: { type: String },
+  createdAt: { type: Date, default: Date.now }, // ✅ complaint raised datetime
 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);

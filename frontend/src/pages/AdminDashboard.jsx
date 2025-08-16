@@ -13,6 +13,7 @@ import {
   faFileCsv, faFilePdf
 } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
+import "jspdf-autotable";
 
 
 export default function AdminDashboard() {
@@ -161,35 +162,88 @@ export default function AdminDashboard() {
   };
 
   const exportKitesToCSV = () => {
-  const headers = ['Aadhaar', 'Name', 'Phone Number', 'Number of Kites', 'Date'];
-  const rows = kites.map(k => [
+  const headers = ['S.No', 'Aadhaar', 'Name', 'Phone Number', 'Number of Kites', 'Date'];
+
+  const rows = kites.map((k, index) => [
+    index + 1, // S.No
     k.aadhaar,
     k.name,
-    k.phone || '',       // Add phone field
+    k.phone || '',
     k.quantity,
-    k.date || ''         // Add date field
+    k.date
+      ? new Date(k.date).toLocaleString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true
+        })
+      : 'N/A'
   ]);
 
-  const csv = headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
+  const csv =
+    headers.join(',') +
+    '\n' +
+    rows.map(r =>
+      r
+        .map(val => `"${val}"`) // wrap each value in quotes so commas don’t break CSV
+        .join(',')
+    ).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = 'kite-distribution.csv';
   link.click();
 };
 
+const exportKitesToPDF = () => {
+  if (!kites || kites.length === 0) {
+    alert("No data to export!");
+    return;
+  }
 
-  const exportKitesToPDF = () => {
-    const input = document.getElementById('kite-table');
-    html2canvas(input).then(canvas => {
-      const img = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('l', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(img, 'PNG', 0, 10, pdfWidth, pdfHeight);
-      pdf.save('kite-distribution.pdf');
-    });
-  };
+  const doc = new jsPDF("l", "mm", "a4");
+
+  // Title
+  doc.setFontSize(16);
+  doc.text("Kite Distribution Records", 14, 15);
+
+  // Table data
+  const headers = [["S.No", "Aadhaar", "Name", "Number of Kites", "Date"]];
+  const rows = kites.map((k, index) => [
+    index + 1,
+    k.aadhaar,
+    k.name,
+    k.quantity,
+    k.date
+      ? new Date(k.date).toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        })
+      : "N/A",
+  ]);
+
+  // Generate table
+  doc.autoTable({
+    head: headers,
+    body: rows,
+    startY: 25,
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+  });
+
+  doc.save("kite-distribution.pdf");
+};
+
+
 
   const filteredComplaints = complaints.filter(c =>
     Object.values(c).some(value =>
@@ -232,6 +286,7 @@ export default function AdminDashboard() {
     pdf.addImage(imgData, 'PNG', 0, 10, w, h);
     pdf.save(`${title}.pdf`);
   };
+  
   const exportTableExcel = (headers, rows, filename = 'data') => {
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const workbook = XLSX.utils.book_new();
@@ -339,88 +394,172 @@ export default function AdminDashboard() {
             onChange={e => setSearchQuery(e.target.value)}
           />
 
-          <div className="table-responsive" id="complaint-table">
-            <table className="table table-bordered align-middle">
-              <thead className="table-dark">
-                <tr>
-                  <th>ID</th><th>Name</th><th>Phone</th><th>Address</th>
-                  <th>Department</th><th>Complaint</th><th>Remarks</th><th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredComplaints.map((c, idx) => (
-                  <tr key={idx} className={c.status === 'completed' ? 'table-success' : 'table-danger'}>
-                    <td>{c.complaintId}</td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.name} onChange={e => setEditedComplaint({ ...editedComplaint, name: e.target.value })} />
-                      ) : c.name}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.phone} onChange={e => setEditedComplaint({ ...editedComplaint, phone: e.target.value })} />
-                      ) : c.phone}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.address} onChange={e => setEditedComplaint({ ...editedComplaint, address: e.target.value })} />
-                      ) : c.address}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.department} onChange={e => setEditedComplaint({ ...editedComplaint, department: e.target.value })} />
-                      ) : c.department}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.details} onChange={e => setEditedComplaint({ ...editedComplaint, details: e.target.value })} />
-                      ) : c.details}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <input value={editedComplaint.remarks} onChange={e => setEditedComplaint({ ...editedComplaint, remarks: e.target.value })} />
-                      ) : c.remarks}
-                    </td>
-                    <td>
-                      {editingComplaintId === c._id ? (
-                        <button className="btn btn-sm btn-success" onClick={handleSaveClick}>
-                          <FontAwesomeIcon icon={faSave} />
-                        </button>
-                      ) : (
-                        <button className="btn btn-sm btn-warning me-1" onClick={() => handleEditClick(c)}>
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                      )}
-                      {/* <button className="btn btn-sm btn-danger me-1" onClick={() => deleteComplaint(c._id)}>
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button> */}
-                      <button className="btn btn-sm btn-info me-1" onClick={() => toggleStatus(c._id, c.status)}>
-                        <FontAwesomeIcon icon={faSync} />
-                      </button>
-                      <button
-                        className="btn btn-sm btn-dark"
-                        onClick={() => {
-                          const copyText = `complaintId: ${c.complaintId},\nname: ${c.name},\nphone: ${c.phone},\naddress: ${c.address},\ndepartment: ${c.department},\ndetails: ${c.details}`;
-                          navigator.clipboard.writeText(copyText).then(() => {
-                            Swal.fire({
-                              icon: 'success',
-                              title: 'Copied!',
-                              text: 'Complaint details copied to clipboard',
-                              timer: 1500,
-                              showConfirmButton: false
-                            });
-                          });
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faCopy} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+  <div className="table-responsive shadow rounded-3">
+  <table className="table table-hover table-striped table-bordered align-middle">
+    <thead className="table-dark text-center">
+      <tr>
+        <th>S.No</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Department</th>
+        <th>Complaint</th>
+        <th>Remarks</th>
+        <th>Date & Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
 
-            </table>
-          </div>
+    <tbody className="text-center">
+      {filteredComplaints.map((c, idx) => (
+        <tr
+          key={idx}
+          className={c.status === 'completed' ? 'table-success' : 'table-danger'}
+        >
+          {/* ✅ Serial Number */}
+          <td><strong>{idx + 1}</strong></td>
+
+          <td>{c.complaintId}</td>
+          <td>
+            {editingComplaintId === c._id ? (
+              <input
+                className="form-control form-control-sm"
+                value={editedComplaint.name}
+                onChange={e =>
+                  setEditedComplaint({ ...editedComplaint, name: e.target.value })
+                }
+              />
+            ) : (
+              c.name
+            )}
+          </td>
+          <td>
+            {editingComplaintId === c._id ? (
+              <input
+                className="form-control form-control-sm"
+                value={editedComplaint.phone}
+                onChange={e =>
+                  setEditedComplaint({ ...editedComplaint, phone: e.target.value })
+                }
+              />
+            ) : (
+              c.phone
+            )}
+          </td>
+          <td>
+            {editingComplaintId === c._id ? (
+              <input
+                className="form-control form-control-sm"
+                value={editedComplaint.address}
+                onChange={e =>
+                  setEditedComplaint({ ...editedComplaint, address: e.target.value })
+                }
+              />
+            ) : (
+              c.address
+            )}
+          </td>
+          <td>
+            {editingComplaintId === c._id ? (
+              <input
+                className="form-control form-control-sm"
+                value={editedComplaint.department}
+                onChange={e =>
+                  setEditedComplaint({
+                    ...editedComplaint,
+                    department: e.target.value,
+                  })
+                }
+              />
+            ) : (
+              c.department
+            )}
+          </td>
+          <td>
+            {editingComplaintId === c._id ? (
+              <input
+                className="form-control form-control-sm"
+                value={editedComplaint.details}
+                onChange={e =>
+                  setEditedComplaint({
+                    ...editedComplaint,
+                    details: e.target.value,
+                  })
+                }
+              />
+            ) : (
+              c.details
+            )}
+          </td>
+
+          {/* ✅ Auto Remarks Column */}
+          <td>
+            {c.status === 'completed' ? (
+              <span className="badge bg-success">Completed</span>
+            ) : (
+              <span className="badge bg-danger">Pending</span>
+            )}
+          </td>
+
+          {/* ✅ Complaint Date & Time */}
+          <td>
+            <span className="badge bg-secondary">
+              {new Date(c.createdAt).toLocaleString('en-IN', {
+                dateStyle: 'short',
+                timeStyle: 'short',
+              })}
+            </span>
+          </td>
+
+          {/* ✅ Actions */}
+          <td className="d-flex justify-content-center">
+            {editingComplaintId === c._id ? (
+              <button className="btn btn-sm btn-success me-1" onClick={handleSaveClick}>
+                <FontAwesomeIcon icon={faSave} />
+              </button>
+            ) : (
+              <button
+                className="btn btn-sm btn-warning me-1"
+                onClick={() => handleEditClick(c)}
+              >
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+            )}
+
+            <button
+              className="btn btn-sm btn-info me-1"
+              onClick={() => toggleStatus(c._id, c.status)}
+            >
+              <FontAwesomeIcon icon={faSync} />
+            </button>
+
+            <button
+              className="btn btn-sm btn-dark"
+              onClick={() => {
+                const copyText = `complaintId: ${c.complaintId},\nname: ${c.name},\nphone: ${c.phone},\naddress: ${c.address},\ndepartment: ${c.department},\ndetails: ${c.details}`;
+                navigator.clipboard.writeText(copyText).then(() => {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Copied!',
+                    text: 'Complaint details copied to clipboard',
+                    timer: 1500,
+                    showConfirmButton: false,
+                  });
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faCopy} />
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+
         </>
       )}
 
@@ -434,9 +573,10 @@ export default function AdminDashboard() {
         <button className="btn btn-sm btn-outline-secondary me-2" onClick={exportKitesToCSV}>
           <FontAwesomeIcon icon={faFileCsv} /> CSV
         </button>
-        <button className="btn btn-sm btn-outline-danger" onClick={exportKitesToPDF}>
-          <FontAwesomeIcon icon={faFilePdf} /> PDF
-        </button>
+      <button className="btn btn-sm btn-outline-danger" onClick={exportKitesToPDF}>
+  <FontAwesomeIcon icon={faFilePdf} /> PDF
+</button>
+
       </div>
     </div>
     <div className="table-responsive mt-3" id="kite-table">
