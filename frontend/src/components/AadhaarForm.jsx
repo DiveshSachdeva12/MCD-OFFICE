@@ -3,6 +3,47 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
 
+// Verhoeff algorithm tables
+const d = [
+  [0,1,2,3,4,5,6,7,8,9],
+  [1,2,3,4,0,6,7,8,9,5],
+  [2,3,4,0,1,7,8,9,5,6],
+  [3,4,0,1,2,8,9,5,6,7],
+  [4,0,1,2,3,9,5,6,7,8],
+  [5,9,8,7,6,0,4,3,2,1],
+  [6,5,9,8,7,1,0,4,3,2],
+  [7,6,5,9,8,2,1,0,4,3],
+  [8,7,6,5,9,3,2,1,0,4],
+  [9,8,7,6,5,4,3,2,1,0]
+];
+
+const p = [
+  [0,1,2,3,4,5,6,7,8,9],
+  [1,5,7,6,2,8,3,0,9,4],
+  [5,8,0,3,7,9,6,1,4,2],
+  [8,9,1,6,0,4,3,5,2,7],
+  [9,4,5,3,1,2,6,8,7,0],
+  [4,2,8,6,5,7,3,9,0,1],
+  [2,7,9,3,8,0,6,4,1,5],
+  [7,0,4,6,9,1,3,2,5,8]
+];
+
+const inv = [0,4,3,2,1,5,6,7,8,9];
+
+function validateVerhoeff(num) {
+  let c = 0;
+  const myArray = num.split('').reverse().map(x => parseInt(x, 10));
+  for (let i = 0; i < myArray.length; i++) {
+    c = d[c][p[(i % 8)][myArray[i]]];
+  }
+  return c === 0;
+}
+
+const formatAadhaarNumber = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 12);
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+};
+
 const AadhaarForm = () => {
   const [aadhaarData, setAadhaarData] = useState({
     fullName: '',
@@ -16,8 +57,9 @@ const AadhaarForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'aadhaarNumber' && /^\d{0,12}$/.test(value)) {
-      setAadhaarData({ ...aadhaarData, [name]: value });
+    if (name === 'aadhaarNumber') {
+      const formattedValue = formatAadhaarNumber(value);
+      setAadhaarData({ ...aadhaarData, [name]: formattedValue });
     } else if (name === 'mobile' && /^\d{0,10}$/.test(value)) {
       setAadhaarData({ ...aadhaarData, [name]: value });
     } else {
@@ -27,8 +69,24 @@ const AadhaarForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const cleanAadhaarNumber = aadhaarData.aadhaarNumber.replace(/\s/g, '');
+
+    if (cleanAadhaarNumber.length !== 12 || !validateVerhoeff(cleanAadhaarNumber)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Aadhaar Number',
+        text: 'Please enter a valid 12-digit Aadhaar number.',
+        confirmButtonColor: '#dc3545'
+      });
+      return;
+    }
+
     try {
-      await axios.post(`${BASE_URL}/api/aadhaar`, aadhaarData);
+      await axios.post(`${BASE_URL}/api/aadhaar`, {
+        ...aadhaarData,
+        aadhaarNumber: cleanAadhaarNumber // send without spaces
+      });
 
       Swal.fire({
         icon: 'success',
@@ -92,8 +150,8 @@ const AadhaarForm = () => {
             type="text"
             name="aadhaarNumber"
             className="form-control"
-            placeholder="12-digit Aadhaar number"
-            maxLength="12"
+            placeholder="1234 5678 9012"
+            maxLength="14"
             value={aadhaarData.aadhaarNumber}
             onChange={handleChange}
             required

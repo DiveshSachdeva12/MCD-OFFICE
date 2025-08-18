@@ -4,13 +4,19 @@ const Aadhaar = require('../models/Aadhaar');
 
 router.post('/', async (req, res) => {
   try {
-    const newEntry = new Aadhaar(req.body);
-    await newEntry.save();
-    res.status(201).json({ message: 'Aadhaar form submitted successfully' });
+    const newEntry = new Aadhaar({
+      ...req.body,
+      visitedAt: new Date() // ✅ ensure visitedAt is always added
+    });
+
+    const saved = await newEntry.save();
+    res.status(201).json(saved); // ✅ return full object including visitedAt
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Failed to submit Aadhaar form' });
   }
 });
+
 
 router.get('/', async (req, res) => {
   try {

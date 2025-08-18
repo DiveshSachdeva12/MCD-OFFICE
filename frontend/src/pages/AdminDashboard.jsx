@@ -629,92 +629,107 @@ const exportKitesToPDF = () => {
 
         <>
 
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Aadhaar Card Records</h4>
-            <input
-              type="text"
-              className="form-control mb-3"
-              placeholder="Search by name, Aadhaar number or mobile..."
-              value={aadhaarSearch}
-              onChange={(e) => setAadhaarSearch(e.target.value)}
-            />
+         <div className="d-flex justify-content-between align-items-center">
+  <h4>Aadhaar Card Records</h4>
+  <input
+    type="text"
+    className="form-control mb-3"
+    placeholder="Search by name, Aadhaar number or mobile..."
+    value={aadhaarSearch}
+    onChange={(e) => setAadhaarSearch(e.target.value)}
+  />
 
+  <div>
+    <button
+      className="btn btn-sm btn-outline-secondary me-2"
+      onClick={() =>
+        exportTableExcel(
+          [
+            'Name',
+            'Aadhaar Number',
+            'Date of Birth',
+            'Mobile',
+            'Address',
+            'Date & Time Visited'
+          ],
+          aadhaarData.map((a) => [
+            a.fullName || '',
+            a.aadhaarNumber || '',
+            a.dob || '',
+            a.mobile || '',
+            a.address || '',
+            a.visitedAt ? new Date(a.visitedAt).toLocaleString() : ''
+          ]),
+          'aadhaar-data'
+        )
+      }
+    >
+      <FontAwesomeIcon icon={faFileCsv} /> Excel
+    </button>
 
-            <div>
+    <button
+      className="btn btn-sm btn-outline-danger"
+      onClick={() => exportTablePDF('aadhaar-table', 'aadhaar-data')}
+    >
+      <FontAwesomeIcon icon={faFilePdf} /> PDF
+    </button>
+  </div>
+</div>
+
+<div className="table-responsive mt-3" id="aadhaar-table">
+  <table className="table table-bordered">
+    <thead className="table-dark">
+      <tr>
+        <th>S.NO</th>
+        <th>NAME</th>
+        <th>ADDRESS</th>
+        <th>ADHAAR NUMBER</th>
+        <th>PHONE NO</th>
+        <th>DOB</th>
+        <th>ADDRESS CHANGE</th>
+        <th>DATE & TIME VISITED</th> {/* New Column */}
+        <th>ACTION</th>
+      </tr>
+    </thead>
+    <tbody>
+      {aadhaarData
+        .filter(
+          (item) =>
+            item.fullName.toLowerCase().includes(aadhaarSearch.toLowerCase()) ||
+            item.aadhaarNumber.includes(aadhaarSearch) ||
+            item.mobile.includes(aadhaarSearch)
+        )
+        .map((a, index) => (
+          <tr key={a._id}>
+            <td>{index + 1}</td>
+            <td>{a.fullName}</td>
+            <td>{a.address}</td>
+            <td>{a.aadhaarNumber}</td>
+            <td>{a.mobile}</td>
+            <td>{a.dob}</td>
+            <td>{a.addressChange}</td>
+            <td>{a.visitedAt ? new Date(a.visitedAt).toLocaleString() : '—'}</td> {/* New Field */}
+            <td>
               <button
-                className="btn btn-sm btn-outline-secondary me-2"
-                onClick={() =>
-                  exportTableExcel(
-                    ['Name', 'Aadhaar Number', 'Date of Birth', 'Mobile', 'Address'],
-                    aadhaarData.map(a => [
-                      a.fullName || '',
-                      a.aadhaarNumber || '',
-                      a.dob || '',
-                      a.mobile || '',
-                      a.address || ''
-                    ]),
-                    'aadhaar-data'
-                  )
-                }
+                className="btn btn-warning btn-sm me-2"
+                onClick={() => handleEditAadhaar(a)}
               >
-                <FontAwesomeIcon icon={faFileCsv} /> Excel
+                Edit
               </button>
 
-              <button className="btn btn-sm btn-outline-danger" onClick={() =>
-                exportTablePDF('aadhaar-table', 'aadhaar-data')
-              }>
-                <FontAwesomeIcon icon={faFilePdf} /> PDF
-              </button>
-            </div>
-          </div>
-          <div className="table-responsive mt-3" id="aadhaar-table">
-            <table className="table table-bordered">
-              <thead className="table-dark">
-                <tr>
-                  <th>S.NO</th><th>NAME</th><th>ADDRESS</th><th>ADHAAR NUMBER</th><th>PHONE NO </th><th>DOB</th><th>ADDRESS CHANGE </th>
-                  <th>ACTION</th>
+              {/* <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeleteAadhaar(a._id)}
+              >
+                Delete
+              </button> */}
+            </td>
+          </tr>
+        ))}
+    </tbody>
+  </table>
+</div>
 
-                </tr>
-              </thead>
-              <tbody>
-                {aadhaarData
-                  .filter((item) =>
-                    item.fullName.toLowerCase().includes(aadhaarSearch.toLowerCase()) ||
-                    item.aadhaarNumber.includes(aadhaarSearch) ||
-                    item.mobile.includes(aadhaarSearch)
-                  )
-                  .map((a, index) => (
-                    <tr key={a._id}>
-                      <td>{index + 1}</td>
-                      <td>{a.fullName}</td>
-                      <td>{a.address}</td>
-                      <td>{a.aadhaarNumber}</td>
-                      <td>{a.mobile}</td>
-                      <td>{a.dob}</td>
-                      <td>{a.addressChange}</td>
-                      <td>
-                        <button
-                          className="btn btn-warning btn-sm me-2"
-                          onClick={() => handleEditAadhaar(a)}
-                        >
-                          Edit
-                        </button>
-
-
-                        {/* <button
-                          className="btn btn-sm btn-danger"
-                          onClick={() => handleDeleteAadhaar(a._id)}
-                        >
-                          Delete
-                        </button> */}
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-
-
-            </table>
-          </div>
         </>
       )}
 
