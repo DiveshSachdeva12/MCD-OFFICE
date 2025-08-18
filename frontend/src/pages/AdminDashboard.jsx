@@ -338,10 +338,7 @@ const exportKitesToPDF = () => {
       Swal.fire('Error', 'Failed to update record', 'error');
     }
   };
-  const handleEditPension = (pensionItem) => {
-    Swal.fire('Edit Clicked', `Coming Soon: ${pensionItem.fullName}`, 'info');
-  };
-
+ 
 
   const handleEditVoter = (voterItem) => {
     Swal.fire('Edit Clicked', `Coming Soon: ${voterItem.fullName}`, 'info');
@@ -758,76 +755,100 @@ const exportKitesToPDF = () => {
 
       {view === 'pension' && (
         <>
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Pension Records</h4>
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Search by Name, Registration No., or Mobile"
-              value={pensionSearch}
-              onChange={(e) => setPensionSearch(e.target.value)}
-            />
+         <div className="d-flex justify-content-between align-items-center">
+  <h4>Pension Records</h4>
+  <input
+    type="text"
+    className="form-control mb-2"
+    placeholder="Search by Name, Registration No., or Mobile"
+    value={pensionSearch}
+    onChange={(e) => setPensionSearch(e.target.value)}
+  />
 
-            <div>
-              <button
-                className="btn btn-sm btn-outline-secondary me-2"
-                onClick={() =>
-                  exportTableExcel(
-                    ['FULL NAME', 'REGISTRATION NO', 'PASSWORD', 'MOBILE', 'APPLICATION NO'],
-                    pensionData.map(p => [
-                      p.fullName || '',
-                      p.registrationNo || '',
-                      p.password || '',
-                      p.mobile || '',
-                      p.applicationNo || ''
-                    ]),
-                    'pension-data'
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faFileCsv} /> Excel
-              </button>
+  <div>
+    <button
+      className="btn btn-sm btn-outline-secondary me-2"
+      onClick={() =>
+        exportTableExcel(
+          ['FULL NAME', 'REGISTRATION NO', 'PASSWORD', 'MOBILE', 'APPLICATION NO', 'DATE & TIME SUBMITTED'],
+          pensionData.map(p => [
+            p.fullName || '',
+            p.registrationNo || '',
+            p.password || '',
+            p.mobile || '',
+            p.applicationNo || '',
+            p.submittedAt
+              ? `${new Date(p.submittedAt).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                })} ${new Date(p.submittedAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}`
+              : ''
+          ]),
+          'pension-data'
+        )
+      }
+    >
+      <FontAwesomeIcon icon={faFileCsv} /> Excel
+    </button>
 
-              <button className="btn btn-sm btn-outline-danger" onClick={() =>
-                exportTablePDF('pension-table', 'pension-data')
-              }>
-                <FontAwesomeIcon icon={faFilePdf} /> PDF
-              </button>
-            </div>
-          </div>
-          <div className="table-responsive mt-3" id="pension-table">
-            <table className="table table-bordered">
-              <thead className="table-dark">
-                <tr>
-                  <th>FULL NAME </th><th>REGISTRATION NO </th><th>PASSWORD</th><th>MOBILE</th><th>APPLICATION NO </th><th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pensionData
-                  .filter((p) =>
-                    p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-                    p.registrationNo.includes(pensionSearch) ||
-                    p.mobile.includes(pensionSearch)
-                  )
-                  .map((p, index) => (
-                    <tr key={p._id}>
-                      <td>{p.fullName}</td>
-                      <td>{p.registrationNo}</td>
-                      <td>{p.password}</td>
-                      <td>{p.mobile}</td>
-                      <td>{p.applicationNo}</td>
-                      <td>
-                        <button className="btn btn-sm btn-warning" onClick={() => handleEditPension(p)}>
-                          Edit
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
+    <button
+      className="btn btn-sm btn-outline-danger"
+      onClick={() => exportTablePDF('pension-table', 'pension-data')}
+    >
+      <FontAwesomeIcon icon={faFilePdf} /> PDF
+    </button>
+  </div>
+</div>
 
+<div className="table-responsive mt-3" id="pension-table">
+  <table className="table table-bordered">
+    <thead className="table-dark">
+      <tr>
+        <th>FULL NAME</th>
+        <th>REGISTRATION NO</th>
+        <th>PASSWORD</th>
+        <th>MOBILE</th>
+        <th>APPLICATION NO</th>
+        <th>DATE & TIME SUBMITTED</th>
+        {/* <th>Action</th> */}
+      </tr>
+    </thead>
+    <tbody>
+      {pensionData
+        .filter((p) =>
+          p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
+          p.registrationNo.includes(pensionSearch) ||
+          p.mobile.includes(pensionSearch)
+        )
+        .map((p, index) => (
+          <tr key={p._id}>
+            <td>{p.fullName}</td>
+            <td>{p.registrationNo}</td>
+            <td>{p.password}</td>
+            <td>{p.mobile}</td>
+            <td>{p.applicationNo}</td>
+            <td>
+              {p.submittedAt
+                ? `${new Date(p.submittedAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })} ${new Date(p.submittedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}`
+                : '—'}
+            </td>
+          </tr>
+        ))}
+    </tbody>
+  </table>
+</div>
 
-            </table>
-          </div>
         </>
       )}
 
