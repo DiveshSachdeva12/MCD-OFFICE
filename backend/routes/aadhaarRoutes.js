@@ -2,22 +2,23 @@ const express = require('express');
 const router = express.Router();
 const Aadhaar = require('../models/Aadhaar');
 
+// CREATE
 router.post('/', async (req, res) => {
   try {
     const newEntry = new Aadhaar({
       ...req.body,
-      visitedAt: new Date() // ✅ ensure visitedAt is always added
+      submittedAt: new Date()  // ✅ Save timestamp when form is submitted
     });
 
     const saved = await newEntry.save();
-    res.status(201).json(saved); // ✅ return full object including visitedAt
+    res.status(201).json(saved);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to submit Aadhaar form' });
   }
 });
 
-
+// READ
 router.get('/', async (req, res) => {
   try {
     const entries = await Aadhaar.find();
@@ -26,6 +27,8 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Error fetching Aadhaar data' });
   }
 });
+
+// DELETE
 router.delete('/:id', async (req, res) => {
   try {
     const deleted = await Aadhaar.findByIdAndDelete(req.params.id);
@@ -36,8 +39,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-
-// PUT by Aadhaar Number
+// UPDATE by Aadhaar Number
 router.put('/byNumber/:aadhaarNumber', async (req, res) => {
   try {
     const updated = await Aadhaar.findOneAndUpdate(

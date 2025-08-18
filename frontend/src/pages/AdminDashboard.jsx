@@ -629,8 +629,9 @@ const exportKitesToPDF = () => {
 
         <>
 
-         <div className="d-flex justify-content-between align-items-center">
+<div className="d-flex justify-content-between align-items-center">
   <h4>Aadhaar Card Records</h4>
+
   <input
     type="text"
     className="form-control mb-3"
@@ -650,7 +651,7 @@ const exportKitesToPDF = () => {
             'Date of Birth',
             'Mobile',
             'Address',
-            'Date & Time Visited'
+            'Date & Time Submitted'
           ],
           aadhaarData.map((a) => [
             a.fullName || '',
@@ -658,7 +659,16 @@ const exportKitesToPDF = () => {
             a.dob || '',
             a.mobile || '',
             a.address || '',
-            a.visitedAt ? new Date(a.visitedAt).toLocaleString() : ''
+            a.submittedAt
+              ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                })} ${new Date(a.submittedAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}`
+              : ''
           ]),
           'aadhaar-data'
         )
@@ -683,11 +693,11 @@ const exportKitesToPDF = () => {
         <th>S.NO</th>
         <th>NAME</th>
         <th>ADDRESS</th>
-        <th>ADHAAR NUMBER</th>
+        <th>AADHAAR NUMBER</th>
         <th>PHONE NO</th>
         <th>DOB</th>
         <th>ADDRESS CHANGE</th>
-        <th>DATE & TIME VISITED</th> {/* New Column */}
+        <th>DATE & TIME SUBMITTED</th>
         <th>ACTION</th>
       </tr>
     </thead>
@@ -708,7 +718,18 @@ const exportKitesToPDF = () => {
             <td>{a.mobile}</td>
             <td>{a.dob}</td>
             <td>{a.addressChange}</td>
-            <td>{a.visitedAt ? new Date(a.visitedAt).toLocaleString() : '—'}</td> {/* New Field */}
+            <td>
+              {a.submittedAt
+                ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })} ${new Date(a.submittedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}`
+                : '—'}
+            </td>
             <td>
               <button
                 className="btn btn-warning btn-sm me-2"
@@ -717,18 +738,19 @@ const exportKitesToPDF = () => {
                 Edit
               </button>
 
-              {/* <button
+              <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button> */}
+              </button>
             </td>
           </tr>
         ))}
     </tbody>
   </table>
 </div>
+
 
         </>
       )}
