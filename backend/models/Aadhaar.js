@@ -1,3 +1,4 @@
+// models/Aadhaar.js
 const mongoose = require('mongoose');
 
 const AadhaarSchema = new mongoose.Schema({
@@ -7,7 +8,10 @@ const AadhaarSchema = new mongoose.Schema({
   mobile: String,
   dob: String,
   addressChange: String,
-  submittedAt: { type: Date, default: Date.now }  // ✅ Auto-generated timestamp
+  submittedAt: {
+    type: Date,
+    default: Date.now  // ✅ This saves time once at creation
+  }
 });
 
 module.exports = mongoose.model('Aadhaar', AadhaarSchema);

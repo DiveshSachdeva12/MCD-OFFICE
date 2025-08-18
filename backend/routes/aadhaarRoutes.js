@@ -3,11 +3,13 @@ const router = express.Router();
 const Aadhaar = require('../models/Aadhaar');
 
 // CREATE
+// routes/aadhaar.js
+
 router.post('/', async (req, res) => {
   try {
     const newEntry = new Aadhaar({
-      ...req.body,
-      submittedAt: new Date()  // ✅ Save timestamp when form is submitted
+      ...req.body
+     
     });
 
     const saved = await newEntry.save();
@@ -17,6 +19,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Failed to submit Aadhaar form' });
   }
 });
+
 
 // READ
 router.get('/', async (req, res) => {

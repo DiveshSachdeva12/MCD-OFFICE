@@ -718,18 +718,19 @@ const exportKitesToPDF = () => {
             <td>{a.mobile}</td>
             <td>{a.dob}</td>
             <td>{a.addressChange}</td>
-            <td>
-              {a.submittedAt
-                ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                  })} ${new Date(a.submittedAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}`
-                : '—'}
-            </td>
+          <td>
+  {a.submittedAt
+    ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })} ${new Date(a.submittedAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`
+    : '—'}
+</td>
+
             <td>
               <button
                 className="btn btn-warning btn-sm me-2"
