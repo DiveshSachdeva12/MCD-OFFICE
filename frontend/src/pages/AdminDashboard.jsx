@@ -626,6 +626,7 @@ const exportKitesToPDF = () => {
 
         <>
 
+
 <div className="d-flex justify-content-between align-items-center">
   <h4>Aadhaar Card Records</h4>
 
@@ -656,12 +657,12 @@ const exportKitesToPDF = () => {
             a.dob || '',
             a.mobile || '',
             a.address || '',
-            a.submittedAt
-              ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
+            a.createdAt
+              ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric'
-                })} ${new Date(a.submittedAt).toLocaleTimeString([], {
+                })} ${new Date(a.createdAt).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit'
                 })}`
@@ -715,19 +716,18 @@ const exportKitesToPDF = () => {
             <td>{a.mobile}</td>
             <td>{a.dob}</td>
             <td>{a.addressChange}</td>
-         <td>
-  {a.submittedAt
-    ? new Date(a.submittedAt).toLocaleString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    : '—'}
-</td>
-
-
+            <td>
+              {a.createdAt
+                ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })} ${new Date(a.createdAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}`
+                : '—'}
+            </td>
             <td>
               <button
                 className="btn btn-warning btn-sm me-2"
@@ -735,13 +735,12 @@ const exportKitesToPDF = () => {
               >
                 Edit
               </button>
-{/* 
               <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button> */}
+              </button>
             </td>
           </tr>
         ))}
@@ -755,7 +754,7 @@ const exportKitesToPDF = () => {
 
       {view === 'pension' && (
         <>
-         <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex justify-content-between align-items-center">
   <h4>Pension Records</h4>
   <input
     type="text"
@@ -770,23 +769,30 @@ const exportKitesToPDF = () => {
       className="btn btn-sm btn-outline-secondary me-2"
       onClick={() =>
         exportTableExcel(
-          ['FULL NAME', 'REGISTRATION NO', 'PASSWORD', 'MOBILE', 'APPLICATION NO', 'DATE & TIME SUBMITTED'],
-          pensionData.map(p => [
+          [
+            'FULL NAME',
+            'REGISTRATION NO',
+            'PASSWORD',
+            'MOBILE',
+            'APPLICATION NO',
+            'DATE & TIME SUBMITTED',
+          ],
+          pensionData.map((p) => [
             p.fullName || '',
             p.registrationNo || '',
             p.password || '',
             p.mobile || '',
             p.applicationNo || '',
-            p.submittedAt
-              ? `${new Date(p.submittedAt).toLocaleDateString('en-GB', {
+            p.createdAt
+              ? `${new Date(p.createdAt).toLocaleDateString('en-GB', {
                   day: '2-digit',
                   month: '2-digit',
-                  year: 'numeric'
-                })} ${new Date(p.submittedAt).toLocaleTimeString([], {
+                  year: 'numeric',
+                })} ${new Date(p.createdAt).toLocaleTimeString([], {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}`
-              : ''
+              : '',
           ]),
           'pension-data'
         )
@@ -814,6 +820,7 @@ const exportKitesToPDF = () => {
         <th>MOBILE</th>
         <th>APPLICATION NO</th>
         <th>DATE & TIME SUBMITTED</th>
+        {/* Uncomment below if you add action buttons */}
         {/* <th>Action</th> */}
       </tr>
     </thead>
@@ -821,10 +828,10 @@ const exportKitesToPDF = () => {
       {pensionData
         .filter((p) =>
           p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-          p.registrationNo.includes(pensionSearch) ||
+          p.registrationNo.toLowerCase().includes(pensionSearch.toLowerCase()) ||
           p.mobile.includes(pensionSearch)
         )
-        .map((p, index) => (
+        .map((p) => (
           <tr key={p._id}>
             <td>{p.fullName}</td>
             <td>{p.registrationNo}</td>
@@ -832,14 +839,14 @@ const exportKitesToPDF = () => {
             <td>{p.mobile}</td>
             <td>{p.applicationNo}</td>
             <td>
-              {p.submittedAt
-                ? `${new Date(p.submittedAt).toLocaleDateString('en-GB', {
+              {p.createdAt
+                ? `${new Date(p.createdAt).toLocaleDateString('en-GB', {
                     day: '2-digit',
                     month: '2-digit',
-                    year: 'numeric'
-                  })} ${new Date(p.submittedAt).toLocaleTimeString([], {
+                    year: 'numeric',
+                  })} ${new Date(p.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}`
                 : '—'}
             </td>
