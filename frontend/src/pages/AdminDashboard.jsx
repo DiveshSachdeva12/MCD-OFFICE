@@ -718,18 +718,18 @@ const exportKitesToPDF = () => {
             <td>{a.mobile}</td>
             <td>{a.dob}</td>
             <td>{a.addressChange}</td>
-          <td>
+         <td>
   {a.submittedAt
-    ? `${new Date(a.submittedAt).toLocaleDateString('en-GB', {
+    ? new Date(a.submittedAt).toLocaleString('en-GB', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
-      })} ${new Date(a.submittedAt).toLocaleTimeString([], {
+        year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
-      })}`
+      })
     : '—'}
 </td>
+
 
             <td>
               <button
@@ -738,13 +738,13 @@ const exportKitesToPDF = () => {
               >
                 Edit
               </button>
-
+{/* 
               <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button>
+              </button> */}
             </td>
           </tr>
         ))}

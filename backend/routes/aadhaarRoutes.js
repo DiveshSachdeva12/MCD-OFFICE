@@ -7,11 +7,8 @@ const Aadhaar = require('../models/Aadhaar');
 
 router.post('/', async (req, res) => {
   try {
-    const newEntry = new Aadhaar({
-      ...req.body
-     
-    });
-
+    // Don't set submittedAt here, mongoose will handle it via default
+    const newEntry = new Aadhaar(req.body);
     const saved = await newEntry.save();
     res.status(201).json(saved);
   } catch (err) {
