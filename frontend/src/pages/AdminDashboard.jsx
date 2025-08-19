@@ -34,13 +34,6 @@ export default function AdminDashboard() {
   const [pensionData, setPensionData] = useState([]);
   const [voterIdData, setVoterIdData] = useState([]);
 
-  // For modals
-  const [showPensionEditModal, setShowPensionEditModal] = useState(false);
-  const [showVoterEditModal, setShowVoterEditModal] = useState(false);
-
-  // Form data
-  const [pensionFormData, setPensionFormData] = useState({ _id: '', name: '', age: '', bank: '' });
-  const [voterFormData, setVoterFormData] = useState({ _id: '', fullName: '', mobile: '', applicationNo: '', voterCardNo: '' });
 
 
   useEffect(() => {
@@ -338,11 +331,49 @@ const exportKitesToPDF = () => {
       Swal.fire('Error', 'Failed to update record', 'error');
     }
   };
- 
 
-  const handleEditVoter = (voterItem) => {
-    Swal.fire('Edit Clicked', `Coming Soon: ${voterItem.fullName}`, 'info');
-  };
+  
+ // 🛠 Delete Pension Record
+const handleDeletePension = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this pension record?")) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/pension/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete pension record ❌");
+    }
+
+    // ✅ Update state after successful delete
+    setPensionData((prevData) => prevData.filter((item) => item._id !== id));
+
+    alert("Pension record deleted ✅");
+  } catch (error) {
+    console.error("Error deleting pension record:", error);
+    alert("Failed to delete pension record ❌");
+  }
+};
+
+
+  // ✨ Delete voter
+const handleDeleteVoter = async (id) => {
+  if (window.confirm("Are you sure you want to delete this voter record?")) {
+    try {
+        await axios.delete(`${BASE_URL}/api/voterid/${id}`);
+        setVoterIdData(voterIdData.filter((v) => v._id !== id));
+      alert("Voter deleted successfully ✅");
+    } catch (error) {
+      console.error("Error deleting voter:", error.response?.data || error.message);
+      alert("Failed to delete voter record ❌");
+    }
+  }
+};
+
+
 
 
 
@@ -737,12 +768,12 @@ const exportKitesToPDF = () => {
                 Edit
               </button>
               {/* Optional Delete Button */}
-              <button
+              {/* <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button>
+              </button> */}
             </td>
           </tr>
         ))}
@@ -759,11 +790,13 @@ const exportKitesToPDF = () => {
 
       {view === 'pension' && (
         <>
-        <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center">
   <h4>Pension Records</h4>
+
   <input
     type="text"
-    className="form-control mb-2"
+    className="form-control ms-3"
+    style={{ maxWidth: "300px" }}
     placeholder="Search by Name, Registration No., or Mobile"
     value={pensionSearch}
     onChange={(e) => setPensionSearch(e.target.value)}
@@ -775,31 +808,32 @@ const exportKitesToPDF = () => {
       onClick={() =>
         exportTableExcel(
           [
-            'FULL NAME',
-            'REGISTRATION NO',
-            'PASSWORD',
-            'MOBILE',
-            'APPLICATION NO',
-            'DATE & TIME SUBMITTED',
+            "FULL NAME",
+            "REGISTRATION NO",
+            "PASSWORD",
+            "MOBILE",
+            "APPLICATION NO",
+            "DATE & TIME SUBMITTED",
           ],
           pensionData.map((p) => [
-            p.fullName || '',
-            p.registrationNo || '',
-            p.password || '',
-            p.mobile || '',
-            p.applicationNo || '',
+            p.fullName || "",
+            p.registrationNo || "",
+            p.password || "",
+            p.mobile || "",
+            p.applicationNo || "",
             p.createdAt
-              ? `${new Date(p.createdAt).toLocaleDateString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
+              ? `${new Date(p.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
                 })} ${new Date(p.createdAt).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
                 })}`
-              : '',
+              : "",
           ]),
-          'pension-data'
+          "pension-data"
         )
       }
     >
@@ -808,7 +842,7 @@ const exportKitesToPDF = () => {
 
     <button
       className="btn btn-sm btn-outline-danger"
-      onClick={() => exportTablePDF('pension-table', 'pension-data')}
+      onClick={() => exportTablePDF("pension-table", "pension-data")}
     >
       <FontAwesomeIcon icon={faFilePdf} /> PDF
     </button>
@@ -825,16 +859,16 @@ const exportKitesToPDF = () => {
         <th>MOBILE</th>
         <th>APPLICATION NO</th>
         <th>DATE & TIME SUBMITTED</th>
-        {/* Uncomment below if you add action buttons */}
-        {/* <th>Action</th> */}
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       {pensionData
-        .filter((p) =>
-          p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-          p.registrationNo.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-          p.mobile.includes(pensionSearch)
+        .filter(
+          (p) =>
+            p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
+            p.registrationNo.toLowerCase().includes(pensionSearch.toLowerCase()) ||
+            p.mobile.includes(pensionSearch)
         )
         .map((p) => (
           <tr key={p._id}>
@@ -845,15 +879,24 @@ const exportKitesToPDF = () => {
             <td>{p.applicationNo}</td>
             <td>
               {p.createdAt
-                ? `${new Date(p.createdAt).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
+                ? `${new Date(p.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
                   })} ${new Date(p.createdAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
                   })}`
-                : '—'}
+                : "—"}
+            </td>
+            <td>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeletePension(p._id)}
+              >
+                <FontAwesomeIcon icon={faTrash} /> Delete
+              </button>
             </td>
           </tr>
         ))}
@@ -861,79 +904,138 @@ const exportKitesToPDF = () => {
   </table>
 </div>
 
+
+
+
         </>
       )}
 
       {view === 'voterid' && (
         <>
-          <div className="d-flex justify-content-between align-items-center">
-            <h4>Voter ID Records</h4>
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Search by Name, Mobile or Voter Card No."
-              value={voterSearch}
-              onChange={(e) => setVoterSearch(e.target.value)}
-            />
+      {view === 'voterid' && (
+  <>
+    <div className="d-flex justify-content-between align-items-center">
+      <h4>Voter ID Records</h4>
+      <input
+        type="text"
+        className="form-control mb-2"
+        placeholder="Search by Name, Mobile or Voter Card No."
+        value={voterSearch}
+        onChange={(e) => setVoterSearch(e.target.value)}
+      />
 
-            <div>
-              <button
-                className="btn btn-sm btn-outline-success me-2"
-                onClick={() =>
-                  exportTableExcel(
-                    ['FULL NAME ', 'MOBILE', 'APPLICATION NO ', 'VOTER CARD NO'],
-                    voterIdData.map(v => [
-                      v.fullName || '',
-                      v.mobile || '',
-                      v.applicationNo || '',
-                      v.voterCardNo || ''
-                    ]),
-                    'voter-id-data'
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faFileCsv} /> Export Excel
-              </button>
+      <div>
+        <button
+          className="btn btn-sm btn-outline-success me-2"
+          onClick={() =>
+            exportTableExcel(
+              [
+                'FULL NAME',
+                'MOBILE',
+                'APPLICATION NO',
+                'VOTER CARD NO',
+                'DATE & TIME SUBMITTED',
+              ],
+              voterIdData.map((v) => [
+                v.fullName || '',
+                v.mobile || '',
+                v.applicationNo || '',
+                v.voterCardNo || '',
+                v.createdAt
+                  ? `${new Date(v.createdAt).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })} ${new Date(v.createdAt).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true, // ✅ 12 hours format
+                    })}`
+                  : '',
+              ]),
+              'voter-id-data'
+            )
+          }
+        >
+          <FontAwesomeIcon icon={faFileCsv} /> Export Excel
+        </button>
 
-              <button className="btn btn-sm btn-outline-danger" onClick={() =>
-                exportTablePDF('voterid-table', 'voterid-data')
-              }>
-                <FontAwesomeIcon icon={faFilePdf} /> PDF
-              </button>
-            </div>
-          </div>
-          <div className="table-responsive mt-3" id="voterid-table">
-            <table className="table table-bordered">
-              <thead className="table-dark">
-                <tr>
-                  <th>FULL NAME </th><th>MOBILE</th><th>APPLICATION NO</th><th>VOTER CARD NO</th><th>ACTION</th>
-                </tr>
-              </thead>
-              <tbody>
-                {voterIdData
-                  .filter((v) =>
-                    v.fullName.toLowerCase().includes(voterSearch.toLowerCase()) ||
-                    v.voterCardNo.includes(voterSearch) ||
-                    v.mobile.includes(voterSearch)
-                  )
-                  .map((v, index) => (
-                    <tr key={v._id}>
-                      <td>{v.fullName}</td>
-                      <td>{v.mobile}</td>
-                      <td>{v.applicationNo}</td>
-                      <td>{v.voterCardNo}</td>
-                      <td>
-                        <button className="btn btn-sm btn-warning" onClick={() => handleEditVoter(v)}>
-                          Edit
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
+        <button
+          className="btn btn-sm btn-outline-danger"
+          onClick={() => exportTablePDF('voterid-table', 'voterid-data')}
+        >
+          <FontAwesomeIcon icon={faFilePdf} /> PDF
+        </button>
+      </div>
+    </div>
+
+    <div className="table-responsive mt-3" id="voterid-table">
+      <table className="table table-bordered">
+        <thead className="table-dark">
+          <tr>
+            <th>S.NO</th>
+            <th>FULL NAME</th>
+            <th>MOBILE</th>
+            <th>APPLICATION NO</th>
+            <th>VOTER CARD NO</th>
+            <th>DATE & TIME SUBMITTED</th>
+            <th>ACTIONS</th> {/* ✅ Added Actions Column */}
+          </tr>
+        </thead>
+        <tbody>
+          {voterIdData
+            .filter(
+              (v) =>
+                v.fullName.toLowerCase().includes(voterSearch.toLowerCase()) ||
+                v.voterCardNo.includes(voterSearch) ||
+                v.mobile.includes(voterSearch)
+            )
+            .map((v, index) => (
+              <tr key={v._id}>
+                <td>{index + 1}</td>
+                <td>{v.fullName}</td>
+                <td>{v.mobile}</td>
+                <td>{v.applicationNo}</td>
+                <td>{v.voterCardNo}</td>
+                <td>
+                  {v.createdAt
+                    ? `${new Date(v.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })} ${new Date(v.createdAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}`
+                    : '—'}
+                </td>
+                <td>
+                  {/* ✅ Edit Button */}
+                  <button
+                    className="btn btn-sm btn-primary me-2"
+                    onClick={() => handleEditVoter(v)}
+                  >
+                    Edit
+                  </button>
+
+                  {/* ✅ Delete Button */}
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDeleteVoter(v._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  </>
+)}
 
 
-            </table>
-          </div>
         </>
       )}
 

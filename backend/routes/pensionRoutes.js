@@ -40,10 +40,9 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete pension entry by id
+// ✅ Delete pension entry by id
 router.delete('/:id', async (req, res) => {
   try {
-    console.log('Deleting pension record with id:', req.params.id);
     const deleted = await Pension.findByIdAndDelete(req.params.id);
     if (!deleted) {
       return res.status(404).json({ message: 'Pension record not found' });
