@@ -626,7 +626,6 @@ const exportKitesToPDF = () => {
 
         <>
 
-
 <div className="d-flex justify-content-between align-items-center">
   <h4>Aadhaar Card Records</h4>
 
@@ -649,7 +648,7 @@ const exportKitesToPDF = () => {
             'Date of Birth',
             'Mobile',
             'Address',
-            'Date & Time Submitted'
+            'Date & Time Submitted',
           ],
           aadhaarData.map((a) => [
             a.fullName || '',
@@ -661,12 +660,12 @@ const exportKitesToPDF = () => {
               ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
                   day: '2-digit',
                   month: '2-digit',
-                  year: 'numeric'
+                  year: 'numeric',
                 })} ${new Date(a.createdAt).toLocaleTimeString([], {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
                 })}`
-              : ''
+              : '',
           ]),
           'aadhaar-data'
         )
@@ -721,10 +720,10 @@ const exportKitesToPDF = () => {
                 ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
                     day: '2-digit',
                     month: '2-digit',
-                    year: 'numeric'
+                    year: 'numeric',
                   })} ${new Date(a.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}`
                 : '—'}
             </td>
@@ -735,18 +734,21 @@ const exportKitesToPDF = () => {
               >
                 Edit
               </button>
-              <button
+              {/* Optional Delete Button */}
+              {/* <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button>
+              </button> */}
             </td>
           </tr>
         ))}
     </tbody>
   </table>
 </div>
+
+
 
 
         </>
