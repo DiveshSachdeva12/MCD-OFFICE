@@ -664,6 +664,7 @@ const exportKitesToPDF = () => {
                 })} ${new Date(a.createdAt).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
+                  second: '2-digit',
                 })}`
               : '',
           ]),
@@ -724,6 +725,7 @@ const exportKitesToPDF = () => {
                   })} ${new Date(a.createdAt).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
+                    second: '2-digit',
                   })}`
                 : '—'}
             </td>
@@ -735,18 +737,19 @@ const exportKitesToPDF = () => {
                 Edit
               </button>
               {/* Optional Delete Button */}
-              {/* <button
+              <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button> */}
+              </button>
             </td>
           </tr>
         ))}
     </tbody>
   </table>
 </div>
+
 
 
 
