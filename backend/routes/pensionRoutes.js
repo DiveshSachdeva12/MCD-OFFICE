@@ -1,57 +1,82 @@
 // routes/pensions.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Pension = require('../models/Pension');
+const Pension = require("../models/Pension");
 
-// Create new pension entry
-router.post('/', async (req, res) => {
+// ➕ Create new pension entry
+router.post("/", async (req, res) => {
   try {
     const newEntry = new Pension(req.body);
     await newEntry.save();
-    res.status(201).json({ message: 'Pension form submitted successfully', data: newEntry });
+    res.status(201).json({
+      success: true,
+      message: "Pension form submitted successfully",
+      data: newEntry,
+    });
   } catch (err) {
-    console.error('Error creating pension entry:', err);
-    res.status(500).json({ message: 'Failed to submit Pension form' });
+    console.error("Error creating pension entry:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to submit Pension form",
+      error: err.message,
+    });
   }
 });
 
-// Get all pension entries
-router.get('/', async (req, res) => {
+// 📥 Get all pension entries
+router.get("/", async (req, res) => {
   try {
     const entries = await Pension.find();
-    res.status(200).json(entries);
+    res.status(200).json({ success: true, data: entries });
   } catch (err) {
-    console.error('Error fetching pension data:', err);
-    res.status(500).json({ message: 'Error fetching Pension data' });
+    console.error("Error fetching pension data:", err);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching Pension data",
+      error: err.message,
+    });
   }
 });
 
-// Update pension entry by id
-router.put('/:id', async (req, res) => {
+// ✏️ Update pension entry by id
+router.put("/:id", async (req, res) => {
   try {
-    const updatedPension = await Pension.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedPension = await Pension.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
     if (!updatedPension) {
-      return res.status(404).json({ message: 'Pension record not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Pension record not found" });
     }
-    res.json(updatedPension);
+
+    res.json({
+      success: true,
+      message: "Pension record updated successfully",
+      data: updatedPension,
+    });
   } catch (err) {
-    console.error('Error updating pension:', err);
-    res.status(400).json({ error: err.message });
+    console.error("Error updating pension:", err);
+    res.status(400).json({
+      success: false,
+      message: "Error updating pension record",
+      error: err.message,
+    });
   }
 });
 
-// ✅ Delete pension entry by id
 router.delete('/:id', async (req, res) => {
   try {
-    const deleted = await Pension.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ message: 'Pension record not found' });
-    }
+    const pension = await Pension.findByIdAndDelete(req.params.id);
+    if (!pension) return res.status(404).json({ message: 'Record not found' });
     res.json({ message: 'Deleted successfully' });
   } catch (err) {
-    console.error('Failed to delete pension record:', err);
-    res.status(500).json({ message: 'Failed to delete pension record' });
+    res.status(500).json({ message: err.message });
   }
 });
+
 
 module.exports = router;

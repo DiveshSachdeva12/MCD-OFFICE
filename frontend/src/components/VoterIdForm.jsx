@@ -23,8 +23,7 @@ const VoterIdForm = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    await axios.post(`${BASE_URL}/api/voter`, voterData);  // ✅ fixed endpoint
-    Swal.fire({
+    await axios.post(`${BASE_URL}/api/voterid`, voterData);    Swal.fire({
       icon: 'success',
       title: 'Submitted!',
       text: '✅ Voter ID form submitted successfully'

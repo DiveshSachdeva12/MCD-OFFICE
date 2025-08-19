@@ -332,48 +332,55 @@ const exportKitesToPDF = () => {
     }
   };
 
-  
- // 🛠 Delete Pension Record
+  // delete pension button
 const handleDeletePension = async (id) => {
-  if (!window.confirm("Are you sure you want to delete this pension record?")) {
-    return;
-  }
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won’t be able to recover this pension record!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${BASE_URL}/api/pension/${id}`);
+        setPensionData(pensionData.filter((p) => p._id !== id));
 
-  try {
-    const response = await fetch(`${BASE_URL}/pension/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to delete pension record ❌");
+        Swal.fire("Deleted!", "Pension record deleted successfully ✅", "success");
+      } catch (error) {
+        console.error("Error deleting pension:", error.response?.data || error.message);
+        Swal.fire("Error", "Failed to delete pension record ❌", "error");
+      }
     }
-
-    // ✅ Update state after successful delete
-    setPensionData((prevData) => prevData.filter((item) => item._id !== id));
-
-    alert("Pension record deleted ✅");
-  } catch (error) {
-    console.error("Error deleting pension record:", error);
-    alert("Failed to delete pension record ❌");
-  }
+  });
 };
 
-
-  // ✨ Delete voter
+// delete voter button 
 const handleDeleteVoter = async (id) => {
-  if (window.confirm("Are you sure you want to delete this voter record?")) {
-    try {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "This voter record will be permanently deleted!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
         await axios.delete(`${BASE_URL}/api/voterid/${id}`);
         setVoterIdData(voterIdData.filter((v) => v._id !== id));
-      alert("Voter deleted successfully ✅");
-    } catch (error) {
-      console.error("Error deleting voter:", error.response?.data || error.message);
-      alert("Failed to delete voter record ❌");
+
+        Swal.fire("Deleted!", "Voter record deleted successfully ✅", "success");
+      } catch (error) {
+        console.error("Error deleting voter:", error.response?.data || error.message);
+        Swal.fire("Error", "Failed to delete voter record ❌", "error");
+      }
     }
-  }
+  });
 };
-
-
 
 
 
@@ -653,10 +660,10 @@ const handleDeleteVoter = async (id) => {
   </>
 )}
 
+
+{/* adharcard coding */}
       {view === 'aadhaar' && (
-
         <>
-
 <div className="d-flex justify-content-between align-items-center">
   <h4>Aadhaar Card Records</h4>
 
@@ -767,7 +774,7 @@ const handleDeleteVoter = async (id) => {
               >
                 Edit
               </button>
-              {/* Optional Delete Button */}
+             
               {/* <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
@@ -780,14 +787,12 @@ const handleDeleteVoter = async (id) => {
     </tbody>
   </table>
 </div>
-
-
-
-
-
         </>
       )}
 
+
+
+{/* pension coding */}
       {view === 'pension' && (
         <>
       <div className="d-flex justify-content-between align-items-center">
@@ -863,56 +868,55 @@ const handleDeleteVoter = async (id) => {
       </tr>
     </thead>
     <tbody>
-      {pensionData
-        .filter(
-          (p) =>
-            p.fullName.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-            p.registrationNo.toLowerCase().includes(pensionSearch.toLowerCase()) ||
-            p.mobile.includes(pensionSearch)
-        )
-        .map((p) => (
-          <tr key={p._id}>
-            <td>{p.fullName}</td>
-            <td>{p.registrationNo}</td>
-            <td>{p.password}</td>
-            <td>{p.mobile}</td>
-            <td>{p.applicationNo}</td>
-            <td>
-              {p.createdAt
-                ? `${new Date(p.createdAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })} ${new Date(p.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}`
-                : "—"}
-            </td>
-            <td>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDeletePension(p._id)}
-              >
-                <FontAwesomeIcon icon={faTrash} /> Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-    </tbody>
+  {Array.isArray(pensionData) &&
+    pensionData
+      .filter(
+        (p) =>
+          (p.fullName?.toLowerCase() || "").includes(pensionSearch.toLowerCase()) ||
+          (p.registrationNo?.toLowerCase() || "").includes(pensionSearch.toLowerCase()) ||
+          (p.mobile || "").includes(pensionSearch)
+      )
+      .map((p) => (
+        <tr key={p._id}>
+          <td>{p.fullName}</td>
+          <td>{p.registrationNo}</td>
+          <td>{p.password}</td>
+          <td>{p.mobile}</td>
+          <td>{p.applicationNo}</td>
+          <td>
+            {p.createdAt
+              ? `${new Date(p.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })} ${new Date(p.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}`
+              : "—"}
+          </td>
+          <td>
+            {/* <button
+              className="btn btn-sm btn-danger"
+              onClick={() => handleDeletePension(p._id)}
+            >
+              <FontAwesomeIcon icon={faTrash} /> Delete
+            </button> */}
+          </td>
+        </tr>
+      ))}
+</tbody>
   </table>
 </div>
-
-
-
-
         </>
       )}
 
-      {view === 'voterid' && (
-        <>
-      {view === 'voterid' && (
+
+
+
+      {/* voter id form coding */}
+     {view === 'voterid' && (
   <>
     <div className="d-flex justify-content-between align-items-center">
       <h4>Voter ID Records</h4>
@@ -949,7 +953,7 @@ const handleDeleteVoter = async (id) => {
                     })} ${new Date(v.createdAt).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
-                      hour12: true, // ✅ 12 hours format
+                      hour12: true,
                     })}`
                   : '',
               ]),
@@ -979,7 +983,7 @@ const handleDeleteVoter = async (id) => {
             <th>APPLICATION NO</th>
             <th>VOTER CARD NO</th>
             <th>DATE & TIME SUBMITTED</th>
-            <th>ACTIONS</th> {/* ✅ Added Actions Column */}
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
@@ -1011,21 +1015,12 @@ const handleDeleteVoter = async (id) => {
                     : '—'}
                 </td>
                 <td>
-                  {/* ✅ Edit Button */}
-                  <button
-                    className="btn btn-sm btn-primary me-2"
-                    onClick={() => handleEditVoter(v)}
-                  >
-                    Edit
-                  </button>
-
-                  {/* ✅ Delete Button */}
-                  <button
+                  {/* <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleDeleteVoter(v._id)}
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}
@@ -1034,10 +1029,6 @@ const handleDeleteVoter = async (id) => {
     </div>
   </>
 )}
-
-
-        </>
-      )}
 
       {view === 'addSchedule' && <AddScheduleForm />}
       {view === 'viewSchedules' && <ViewSchedules />}
