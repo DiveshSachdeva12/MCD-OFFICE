@@ -254,9 +254,17 @@ const exportKitesToPDF = () => {
 
 
   const fetchPension = async () => {
-    try { const { data } = await axios.get(`${BASE_URL}/api/pension`); setPensionData(data); }
-    catch { Swal.fire('Error', 'Failed to fetch Pension', 'error'); }
+    try {
+      const res = await axios.get(`${BASE_URL}/api/pension`);
+      if (res.data && Array.isArray(res.data.data)) {
+        setPensionData(res.data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching Pension:", err);
+      Swal.fire("Error", "Failed to fetch Pension records", "error");
+    }
   };
+
 
   const fetchVoterId = async () => {
     try {
@@ -660,10 +668,10 @@ const handleDeleteVoter = async (id) => {
   </>
 )}
 
-
-{/* adharcard coding */}
       {view === 'aadhaar' && (
+
         <>
+
 <div className="d-flex justify-content-between align-items-center">
   <h4>Aadhaar Card Records</h4>
 
@@ -912,23 +920,21 @@ const handleDeleteVoter = async (id) => {
         </>
       )}
 
-
-
-
-      {/* voter id form coding */}
-     {view === 'voterid' && (
+    {view === 'voterid' && (
   <>
-    <div className="d-flex justify-content-between align-items-center">
+    <div className="d-flex justify-content-between align-items-center mb-2">
       <h4>Voter ID Records</h4>
+
       <input
         type="text"
-        className="form-control mb-2"
+        className="form-control"
+        style={{ maxWidth: '300px' }}
         placeholder="Search by Name, Mobile or Voter Card No."
         value={voterSearch}
         onChange={(e) => setVoterSearch(e.target.value)}
       />
 
-      <div>
+      <div className="ms-2">
         <button
           className="btn btn-sm btn-outline-success me-2"
           onClick={() =>
@@ -940,23 +946,25 @@ const handleDeleteVoter = async (id) => {
                 'VOTER CARD NO',
                 'DATE & TIME SUBMITTED',
               ],
-              voterIdData.map((v) => [
-                v.fullName || '',
-                v.mobile || '',
-                v.applicationNo || '',
-                v.voterCardNo || '',
-                v.createdAt
-                  ? `${new Date(v.createdAt).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                    })} ${new Date(v.createdAt).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}`
-                  : '',
-              ]),
+              Array.isArray(voterIdData)
+                ? voterIdData.map((v) => [
+                    v.fullName || '',
+                    v.mobile || '',
+                    v.applicationNo || '',
+                    v.voterCardNo || '',
+                    v.createdAt
+                      ? `${new Date(v.createdAt).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                        })} ${new Date(v.createdAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}`
+                      : '',
+                  ])
+                : [],
               'voter-id-data'
             )
           }
@@ -973,7 +981,7 @@ const handleDeleteVoter = async (id) => {
       </div>
     </div>
 
-    <div className="table-responsive mt-3" id="voterid-table">
+    <div className="table-responsive" id="voterid-table">
       <table className="table table-bordered">
         <thead className="table-dark">
           <tr>
@@ -987,13 +995,16 @@ const handleDeleteVoter = async (id) => {
           </tr>
         </thead>
         <tbody>
-          {voterIdData
-            .filter(
-              (v) =>
-                v.fullName.toLowerCase().includes(voterSearch.toLowerCase()) ||
-                v.voterCardNo.includes(voterSearch) ||
-                v.mobile.includes(voterSearch)
-            )
+          {Array.isArray(voterIdData) && voterIdData
+            .filter((v) => {
+              if (!voterSearch) return true;
+              const search = voterSearch.toLowerCase();
+              return (
+                (v.fullName?.toLowerCase() || '').includes(search) ||
+                (v.voterCardNo?.toLowerCase() || '').includes(search) ||
+                (v.mobile || '').includes(search)
+              );
+            })
             .map((v, index) => (
               <tr key={v._id}>
                 <td>{index + 1}</td>
@@ -1029,6 +1040,7 @@ const handleDeleteVoter = async (id) => {
     </div>
   </>
 )}
+
 
       {view === 'addSchedule' && <AddScheduleForm />}
       {view === 'viewSchedules' && <ViewSchedules />}
