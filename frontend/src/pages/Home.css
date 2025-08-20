@@ -30,9 +30,11 @@
 }
 
 .banner-img {
-  width: 100%;
-  height: 400px;      /* Adjust this value for less space */
-  object-fit: cover;  /* Ensures image fills without distortion */
+  width: 100%;          /* full width */
+  height: 100vh;        /* full desktop height */
+  object-fit: contain;    /* fit without distortion */
+  object-position: center; /* center the image */
+  margin: 0;
   display: block;
 }
 
