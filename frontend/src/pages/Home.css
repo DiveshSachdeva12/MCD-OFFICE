@@ -34,7 +34,7 @@
   height: 100vh;        /* full desktop height */
   object-fit: contain;    /* fit without distortion */
   object-position: center; /* center the image */
-  margin: 0;
+  margin-top: -3rem;
   display: block;
 }
 
