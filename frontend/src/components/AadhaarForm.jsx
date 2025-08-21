@@ -3,6 +3,11 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
 
+const formatAadhaarNumber = (value) => {
+  const digits = value.replace(/\D/g, '').slice(0, 12); // remove non-digits & limit 12
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+};
+
 const AadhaarForm = () => {
   const [aadhaarData, setAadhaarData] = useState({
     fullName: '',
@@ -15,14 +20,37 @@ const AadhaarForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAadhaarData({ ...aadhaarData, [name]: value });
+
+    if (name === 'aadhaarNumber') {
+      const formattedValue = formatAadhaarNumber(value);
+      setAadhaarData({ ...aadhaarData, [name]: formattedValue });
+    } else if (name === 'mobile' && /^\d{0,10}$/.test(value)) {
+      setAadhaarData({ ...aadhaarData, [name]: value });
+    } else {
+      setAadhaarData({ ...aadhaarData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const cleanAadhaarNumber = aadhaarData.aadhaarNumber.replace(/\s/g, '');
+
+    if (cleanAadhaarNumber.length !== 12) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Aadhaar Number',
+        text: 'Please enter a valid 12-digit Aadhaar number.',
+        confirmButtonColor: '#dc3545'
+      });
+      return;
+    }
+
     try {
-      await axios.post(`${BASE_URL}/api/aadhaar`, aadhaarData);
+      await axios.post(`${BASE_URL}/api/aadhaar`, {
+        ...aadhaarData,
+        aadhaarNumber: cleanAadhaarNumber // send without spaces
+      });
 
       Swal.fire({
         icon: 'success',
@@ -31,7 +59,6 @@ const AadhaarForm = () => {
         confirmButtonColor: '#28a745'
       });
 
-      // Reset form
       setAadhaarData({
         fullName: '',
         address: '',
@@ -88,7 +115,7 @@ const AadhaarForm = () => {
             name="aadhaarNumber"
             className="form-control"
             placeholder="1234 5678 9012"
-            maxLength="12"
+            maxLength="14"
             value={aadhaarData.aadhaarNumber}
             onChange={handleChange}
             required
