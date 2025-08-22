@@ -677,7 +677,7 @@ const handleDeleteVoter = async (id) => {
 
   <input
     type="text"
-    className="form-control mb-3"
+    className="form-control w-25"
     placeholder="Search by name, Aadhaar number or mobile..."
     value={aadhaarSearch}
     onChange={(e) => setAadhaarSearch(e.target.value)}
@@ -693,7 +693,8 @@ const handleDeleteVoter = async (id) => {
             'Aadhaar Number',
             'Date of Birth',
             'Mobile',
-            'Address',
+            'Old Address',
+            'Address Change',
             'Date & Time Submitted',
           ],
           aadhaarData.map((a) => [
@@ -702,6 +703,7 @@ const handleDeleteVoter = async (id) => {
             a.dob || '',
             a.mobile || '',
             a.address || '',
+            a.addressChange || '',
             a.createdAt
               ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
                   day: '2-digit',
@@ -736,10 +738,10 @@ const handleDeleteVoter = async (id) => {
       <tr>
         <th>S.NO</th>
         <th>NAME</th>
-        <th>ADDRESS</th>
         <th>AADHAAR NUMBER</th>
-        <th>PHONE NO</th>
         <th>DOB</th>
+        <th>MOBILE</th>
+        <th>OLD ADDRESS</th>
         <th>ADDRESS CHANGE</th>
         <th>DATE & TIME SUBMITTED</th>
         <th>ACTION</th>
@@ -757,10 +759,10 @@ const handleDeleteVoter = async (id) => {
           <tr key={a._id}>
             <td>{index + 1}</td>
             <td>{a.fullName}</td>
-            <td>{a.address}</td>
             <td>{a.aadhaarNumber}</td>
-            <td>{a.mobile}</td>
             <td>{a.dob}</td>
+            <td>{a.mobile}</td>
+            <td>{a.address}</td>
             <td>{a.addressChange}</td>
             <td>
               {a.createdAt
@@ -782,7 +784,7 @@ const handleDeleteVoter = async (id) => {
               >
                 Edit
               </button>
-             
+
               <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
@@ -795,6 +797,7 @@ const handleDeleteVoter = async (id) => {
     </tbody>
   </table>
 </div>
+
         </>
       )}
 
