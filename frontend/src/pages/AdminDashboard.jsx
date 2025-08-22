@@ -594,6 +594,14 @@ const handleDeleteVoter = async (id) => {
             >
               <FontAwesomeIcon icon={faCopy} />
             </button>
+
+              {/* <button
+    className="btn btn-sm btn-danger"
+    onClick={() => deleteComplaint(c._id)}
+  >
+    <FontAwesomeIcon icon={faTrash} />
+  </button> */}
+
           </td>
         </tr>
       ))}
