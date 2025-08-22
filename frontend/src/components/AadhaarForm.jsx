@@ -11,11 +11,11 @@ const formatAadhaarNumber = (value) => {
 const AadhaarForm = () => {
   const [aadhaarData, setAadhaarData] = useState({
     fullName: '',
-    address: '',
+    oldAddress: '',
+    newAddress: '',
     aadhaarNumber: '',
     mobile: '',
-    dob: '',
-    addressChange: ''
+    dob: ''
   });
 
   const handleChange = (e) => {
@@ -61,11 +61,11 @@ const AadhaarForm = () => {
 
       setAadhaarData({
         fullName: '',
-        address: '',
+        oldAddress: '',
+        newAddress: '',
         aadhaarNumber: '',
         mobile: '',
-        dob: '',
-        addressChange: ''
+        dob: ''
       });
     } catch (err) {
       Swal.fire({
@@ -90,19 +90,6 @@ const AadhaarForm = () => {
             className="form-control"
             placeholder="Enter full name"
             value={aadhaarData.fullName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label">Registered Address</label>
-          <input
-            type="text"
-            name="address"
-            className="form-control"
-            placeholder="Enter current address"
-            value={aadhaarData.address}
             onChange={handleChange}
             required
           />
@@ -148,14 +135,27 @@ const AadhaarForm = () => {
           />
         </div>
 
-        <div className="col-12">
-          <label className="form-label">Address Change Request</label>
+        <div className="col-md-6">
+          <label className="form-label">Old Address</label>
           <input
             type="text"
-            name="addressChange"
+            name="oldAddress"
             className="form-control"
-            placeholder="Enter new address (if requesting change)"
-            value={aadhaarData.addressChange}
+            placeholder="Enter old address"
+            value={aadhaarData.oldAddress}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="col-md-6">
+          <label className="form-label">New Address</label>
+          <input
+            type="text"
+            name="newAddress"
+            className="form-control"
+            placeholder="Enter new address"
+            value={aadhaarData.newAddress}
             onChange={handleChange}
           />
         </div>
