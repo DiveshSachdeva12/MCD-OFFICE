@@ -793,12 +793,12 @@ const handleDeleteVoter = async (id) => {
                 Edit
               </button>
 
-              {/* <button
+              <button
                 className="btn btn-sm btn-danger"
                 onClick={() => handleDeleteAadhaar(a._id)}
               >
                 Delete
-              </button> */}
+              </button>
             </td>
           </tr>
         ))}
