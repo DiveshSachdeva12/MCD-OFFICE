@@ -693,7 +693,8 @@ const handleDeleteVoter = async (id) => {
             'Aadhaar Number',
             'Date of Birth',
             'Mobile',
-            'Address',
+            'Old Address',
+            'New Address',
             'Date & Time Submitted',
           ],
           aadhaarData.map((a) => [
@@ -701,7 +702,8 @@ const handleDeleteVoter = async (id) => {
             a.aadhaarNumber || '',
             a.dob || '',
             a.mobile || '',
-            a.address || '',
+            a.oldAddress || '',
+            a.newAddress || '',
             a.createdAt
               ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
                   day: '2-digit',
@@ -736,11 +738,11 @@ const handleDeleteVoter = async (id) => {
       <tr>
         <th>S.NO</th>
         <th>NAME</th>
-        <th>ADDRESS</th>
         <th>AADHAAR NUMBER</th>
         <th>PHONE NO</th>
         <th>DOB</th>
-        <th>ADDRESS CHANGE</th>
+        <th>OLD ADDRESS</th>
+        <th>NEW ADDRESS</th>
         <th>DATE & TIME SUBMITTED</th>
         <th>ACTION</th>
       </tr>
@@ -757,11 +759,11 @@ const handleDeleteVoter = async (id) => {
           <tr key={a._id}>
             <td>{index + 1}</td>
             <td>{a.fullName}</td>
-            <td>{a.address}</td>
             <td>{a.aadhaarNumber}</td>
             <td>{a.mobile}</td>
             <td>{a.dob}</td>
-            <td>{a.addressChange}</td>
+            <td>{a.oldAddress}</td>
+            <td>{a.newAddress}</td>
             <td>
               {a.createdAt
                 ? `${new Date(a.createdAt).toLocaleDateString('en-GB', {
@@ -782,13 +784,6 @@ const handleDeleteVoter = async (id) => {
               >
                 Edit
               </button>
-             
-              {/* <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDeleteAadhaar(a._id)}
-              >
-                Delete
-              </button> */}
             </td>
           </tr>
         ))}

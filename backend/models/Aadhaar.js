@@ -5,8 +5,8 @@ const AadhaarSchema = new mongoose.Schema({
   aadhaarNumber: { type: String, required: true, unique: true },
   dob: { type: String },
   mobile: { type: String },
-  address: { type: String },
-  addressChange: { type: String },
-}, { timestamps: true }); // <-- This auto adds createdAt & updatedAt with time
+  oldAddress: { type: String },   // 🏠 Old Address
+  newAddress: { type: String },   // 🏠 New Address
+}, { timestamps: true }); // <-- This auto adds createdAt & updatedAt
 
 module.exports = mongoose.model('Aadhaar', AadhaarSchema);
