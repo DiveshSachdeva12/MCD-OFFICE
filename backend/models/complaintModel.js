@@ -1,19 +1,17 @@
-const mongoose = require('mongoose');
+// models/complaintModel.js
+const mongoose = require("mongoose");
 
 const complaintSchema = new mongoose.Schema({
-  complaintId: { type: String, required: true, unique: true },
+  complaintId: { type: String, required: true },
   name: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String, required: true },
+  department: { type: String, required: true },
   details: { type: String, required: true },
-  department: { type: String },
-  status: {
-    type: String,
-    enum: ['pending', 'completed'],
-    default: 'pending',
-  },
+  photos: [{ type: String }],   // ✅ multiple photos
+  status: { type: String, default: "pending" },
   remarks: { type: String },
-  createdAt: { type: Date, default: Date.now }, // ✅ complaint raised datetime
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Complaint', complaintSchema);
+module.exports = mongoose.model("Complaint", complaintSchema);

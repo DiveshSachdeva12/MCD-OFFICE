@@ -595,12 +595,12 @@ const handleDeleteVoter = async (id) => {
               <FontAwesomeIcon icon={faCopy} />
             </button>
 
-              {/* <button
+              <button
     className="btn btn-sm btn-danger"
     onClick={() => deleteComplaint(c._id)}
   >
     <FontAwesomeIcon icon={faTrash} />
-  </button> */}
+  </button>
 
           </td>
         </tr>
@@ -642,15 +642,16 @@ const handleDeleteVoter = async (id) => {
   </tr>
 </thead>
 <tbody>
-  {kites.map((k, index) => (
-    <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{k.aadhaar}</td>
-      <td>{k.name}</td>
-      <td>{k.quantity}</td>
-      <td>
-        {k.date
-          ? new Date(k.date).toLocaleString('en-IN', {
+  {kites.map((k, index) => {
+    return (
+      <tr key={index}>
+        <td>{index + 1}</td>
+        <td>{k.aadhaar}</td>
+        <td>{k.name}</td>
+        <td>{k.quantity}</td>
+        <td>
+          {k.date
+            ? new Date(k.date).toLocaleString('en-IN', {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
@@ -659,15 +660,16 @@ const handleDeleteVoter = async (id) => {
               second: '2-digit',
               hour12: true
             })
-          : 'N/A'}
-      </td>
-       {/* <td>
-                <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </td> */}
-    </tr>
-  ))}
+            : 'N/A'}
+        </td>
+        <td>
+                     <button className="btn btn-sm btn-danger" onClick={() => deleteKite(k._id)}>
+                       <FontAwesomeIcon icon={faTrash} />
+                     </button>
+                   </td>
+      </tr>
+    );
+  })}
 </tbody>
  
 

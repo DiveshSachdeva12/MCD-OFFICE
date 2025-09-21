@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const AadhaarSchema = new mongoose.Schema(
   {
-    fullName: { type: String, required: true },         // ✔ Name is required
+    fullName: { type: String, required: true },      
     aadhaarNumber: { type: String, required: true, unique: true }, // ✔ Aadhaar must be unique & required
     dob: { type: String, required: true },              // ✔ Required DOB
     mobile: { type: String, required: true },           // ✔ Required Mobile
