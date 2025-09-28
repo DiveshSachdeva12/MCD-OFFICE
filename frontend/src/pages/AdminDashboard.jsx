@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { BASE_URL } from '../api/baseUrl';
-import AddScheduleForm from './AddScheduleForm';
-import ViewSchedules from './ViewSchedules';
 import KiteForm from './KiteForm';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -398,10 +396,8 @@ const handleDeleteVoter = async (id) => {
 
       <div className="d-flex justify-content-center gap-3 flex-wrap mb-4">
         <button className="btn btn-primary" onClick={() => setView('complaints')}>Complaint All Data</button>
-        <button className="btn btn-danger" onClick={() => setView('kitePanel')}>Kite Distribution Panel</button>
-        <button className="btn btn-success" onClick={() => setView('kites')}>Kite Record</button>
-        <button className="btn btn-warning" onClick={() => setView('addSchedule')}>Add Schedule</button>
-        <button className="btn btn-secondary" onClick={() => setView('viewSchedules')}>View Schedules</button>
+        {/* <button className="btn btn-danger" onClick={() => setView('kitePanel')}>Kite Distribution Panel</button>
+        <button className="btn btn-success" onClick={() => setView('kites')}>Kite Record</button> */}
         <button className="btn btn-primary me-2" onClick={() => setView('aadhaar')}>
           Aadhaar Card Details
         </button>
@@ -1055,8 +1051,7 @@ const handleDeleteVoter = async (id) => {
 )}
 
 
-      {view === 'addSchedule' && <AddScheduleForm />}
-      {view === 'viewSchedules' && <ViewSchedules />}
+      
 
       {showEditModal && (
         <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
