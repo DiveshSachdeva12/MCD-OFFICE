@@ -10,8 +10,6 @@ import KitePassword from './pages/KitePassword';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Gallery from './pages/Gallery';
-import AddScheduleForm from './pages/AddScheduleForm';
-import ViewSchedules from './pages/ViewSchedules';
 import ProtectedRoute from './components/ProtectedRoute'; // ✅
 
 export default function App() {
@@ -40,22 +38,6 @@ export default function App() {
           element={
             <ProtectedRoute>
               <KiteForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/add-schedule"
-          element={
-            <ProtectedRoute>
-              <AddScheduleForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/view-schedules"
-          element={
-            <ProtectedRoute>
-              <ViewSchedules />
             </ProtectedRoute>
           }
         />
