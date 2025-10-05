@@ -3,38 +3,82 @@
   width: 100%;
   text-align: center;
   margin-top: 20px;
+  overflow: hidden;
 }
 
+/* Professional Header */
 .header-text {
-  font-size: 4rem;
-  font-weight: bold;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
   text-transform: uppercase;
-  color: #007BFF; /* Sky blue color */
-  -webkit-text-stroke: 2px #000080; /* Dark blue stroke */
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  color: transparent;
+  -webkit-text-stroke: 2px #000080;
+  background: linear-gradient(90deg, #007BFF, #00C6FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: 2px 2px 6px rgba(0, 0, 128, 0.4);
   white-space: nowrap;
-  animation: fadeInOut 4s ease-in-out infinite;
   z-index: 2;
   position: relative;
+  margin-bottom: 1rem;
+  animation: fadeSlideIn 3s ease forwards;
 }
 
-@keyframes fadeInOut {
-  0%, 100% {
+/* Animation */
+@keyframes fadeSlideIn {
+  0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-30px) scale(0.95);
   }
-  50% {
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
+/* Responsive Banner Image */
 .banner-img {
-  width: 100%;          /* full width */
-  height: 100vh;        /* full desktop height */
-  object-fit: contain;    /* fit without distortion */
-  object-position: center; /* center the image */
-  margin-top: -3rem;
+  width: 100%;
+  max-height: 85vh; /* prevents oversized images */
+  height: auto;
+  object-fit: contain; /* keeps full image visible */
+  object-position: center;
   display: block;
+  margin: 0 auto;
+  filter: brightness(90%);
+  border-radius: 0;
+  background-color: #f8f9fa; /* neutral background for transparency */
 }
 
+/* Medium Devices (Tablets & Small Laptops) */
+@media (max-width: 992px) {
+  .header-text {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    -webkit-text-stroke: 1.5px #000080;
+  }
+
+  .banner-img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+}
+
+/* Small Devices (Mobiles) */
+@media (max-width: 600px) {
+  .header-text {
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
+    -webkit-text-stroke: 1px #000080;
+    white-space: normal;
+    padding: 0 10px;
+  }
+
+  .banner-img {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    margin-top: 0;
+  }
+}
